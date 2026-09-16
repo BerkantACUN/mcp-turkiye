@@ -38,3 +38,36 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı kaynak sözleşmeleri', (
     expect(depremler[0]?.zaman).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   }, 20_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: MGM', () => {
+  it('finds a district station and answers with a temperature and a 5-day forecast', async () => {
+    const { merkezBul } = await import('../../src/sources/mgm/index.js');
+    const { gunlukTahminiDonustur, sonDurumuDonustur } = await import(
+      '../../src/sources/mgm/parse.js'
+    );
+    const merkez = await merkezBul('İstanbul', 'Kadıköy');
+    expect(merkez.il).toBe('İstanbul');
+    const h = {
+      origin: 'https://www.mgm.gov.tr',
+      referer: 'https://www.mgm.gov.tr/',
+      'user-agent': 'mcp-turkiye contract test',
+    };
+    const son = sonDurumuDonustur(
+      await (
+        await fetch(`https://servis.mgm.gov.tr/web/sondurumlar?merkezid=${merkez.merkezId}`, {
+          headers: h,
+        })
+      ).json(),
+    );
+    expect(son?.sicaklik).toBeTypeOf('number');
+    const tahmin = gunlukTahminiDonustur(
+      await (
+        await fetch(
+          `https://servis.mgm.gov.tr/web/tahminler/gunluk?istno=${merkez.gunlukTahminIstNo}`,
+          { headers: h },
+        )
+      ).json(),
+    );
+    expect(tahmin.length).toBeGreaterThanOrEqual(5);
+  }, 20_000);
+});

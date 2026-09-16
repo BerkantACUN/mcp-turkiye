@@ -1,8 +1,8 @@
 # mcp-turkiye
 
-**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, AFAD deprem kataloğu, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
+**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, AFAD deprem kataloğu, MGM hava durumu, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
 
-*Turkey's public data as one MCP server: central-bank FX rates, the national earthquake catalogue, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
+*Turkey's public data as one MCP server: central-bank FX rates, the national earthquake catalogue, state weather service observations and forecasts, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
 
 [![CI](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml/badge.svg)](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mcp-turkiye)](https://www.npmjs.com/package/mcp-turkiye)
@@ -45,6 +45,7 @@ Sonra asistanınıza Türkçe sorun:
 
 > "Bugünkü TCMB dolar satış kuru ne, hangi bültenden?"
 > "Son üç günde 4'ten büyük deprem oldu mu?"
+> "Kadıköy'de hava nasıl, hafta sonu yağmur var mı?"
 > "29 Ekim 2026 hangi güne geliyor, iş günü mü?"
 > "TR33 0006 1005 1978 6457 8413 26 geçerli bir IBAN mı, hangi banka?"
 
@@ -55,6 +56,7 @@ Sonra asistanınıza Türkçe sorun:
 | `tcmb_kurlar` | Günün (ya da verilen tarihin) TCMB gösterge kur bülteni, tüm para birimleri | TCMB |
 | `tcmb_kur` | Tek para biriminin kuru — `birim` alanına dikkat, JPY 100 birim için verilir | TCMB |
 | `afad_depremler` | Tarih aralığı, en küçük büyüklük ve limitle deprem listesi; yeniden eskiye | AFAD |
+| `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
 | `resmi_tatiller` | Yılın resmî tatilleri: ulusal bayramlar + Diyanet takvimine göre dinî bayramlar (arefe yarım günleri dahil) | yok |
 | `tatil_mi` | Bir tarih hafta sonu mu, tatil mi, iş günü mü | yok |
 | `dogrula_tckn` | T.C. Kimlik Numarası kontrol basamakları | yok |
@@ -86,7 +88,7 @@ Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesap
 
 ## Yol haritası
 
-Sonraki kaynaklar, hepsi bugün anahtarsız JSON verdiği doğrulanmış: MGM hava durumu, Opet akaryakıt fiyatları (81 il), İş Yatırım hisse fiyat geçmişi, İBB ve İzmir açık veri (CKAN), İBB trafik indeksi, Diyanet vakitleri, Kandilli, Resmî Gazete günlük fihristi, mevzuat.gov.tr tam metin, TCMB EVDS (ücretsiz anahtar). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
+Sonraki kaynaklar, hepsi bugün anahtarsız JSON verdiği doğrulanmış: Opet akaryakıt fiyatları (81 il), İş Yatırım hisse fiyat geçmişi, İBB ve İzmir açık veri (CKAN), İBB trafik indeksi, Diyanet vakitleri, Kandilli, Resmî Gazete günlük fihristi, mevzuat.gov.tr tam metin, TCMB EVDS (ücretsiz anahtar). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Geliştirme
 
@@ -99,7 +101,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys). Nine tools today: central-bank FX bulletins (all currencies or one, today or any past date), AFAD earthquake catalogue queries, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys). Ten tools today: central-bank FX bulletins (all currencies or one, today or any past date), AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

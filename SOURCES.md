@@ -18,6 +18,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Katalog kamuya açıktır; kaynak belirtilerek kullanılır. Değerler AFAD'ın ilk çözümleridir ve sonradan güncellenebilir — `alindi` zamanı bu yüzden yanıttadır.
 - **Davranış:** Sorgular 60 saniye önbellekte. Sonuç istemci tarafında `limit` ile kırpılır; varsayılan 50.
 
+## mgm — Meteoroloji Genel Müdürlüğü
+
+- **Veri:** Anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, görüş, yağış, hadise) ve 5 günlük tahmin; il/ilçe → istasyon eşlemesi.
+- **Uç nokta:** `https://servis.mgm.gov.tr/web/merkezler`, `/web/sondurumlar`, `/web/tahminler/gunluk` — MGM'nin kendi sitesinin kullandığı servis. Servis yalnızca `Origin: https://www.mgm.gov.tr` başlığıyla yanıt verir; sunucu bu başlığı, tarayıcının gönderdiği gibi gönderir.
+- **Şart:** MGM verisi kamuya açıktır ve MGM'ye atıfla kullanılır; sitede "link vermek için" yönergesi bulunur. Resmî bir API sözleşmesi yoktur — biçim değişirse haftalık sözleşme testi yakalar.
+- **Davranış:** İstasyon eşlemesi 24 saat, anlık gözlem 10 dakika, tahmin 30 dakika önbellekte. `-9999` (ölçüm yok) değerleri null'a çevrilir; hadise kodları MGM'nin kendi site betiğindeki tabloyla Türkçe'ye açılır.
+
 ## tatil — Resmî tatiller
 
 - **Veri:** Ulusal bayramlar (2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun) ve dinî bayramlar (Diyanet İşleri Başkanlığı "Dini Günler" takvimi, `vakithesaplama.diyanet.gov.tr`).
