@@ -13,6 +13,8 @@
  * inventing a number.
  */
 
+import { SURUM } from '../surum.js';
+
 export class KaynakHatasi extends Error {
   override readonly name = 'KaynakHatasi';
   constructor(
@@ -37,7 +39,7 @@ export interface IstekSecenekleri {
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_CACHE_MS = 60_000;
-const USER_AGENT = 'mcp-turkiye/0.1.0 (+https://github.com/BerkantACUN/mcp-turkiye)';
+const USER_AGENT = `mcp-turkiye/${SURUM} (+https://github.com/BerkantACUN/mcp-turkiye)`;
 
 interface OnbellekKaydi {
   readonly body: string;

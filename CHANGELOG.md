@@ -4,6 +4,10 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-16
+
+Üç yeni kaynak, on dört araç.
+
 ### Added
 
 - **mgm:** `mgm_hava_durumu` — il/ilçe için MGM anlık gözlemi ve 5 günlük tahmin; hadise kodları MGM'nin kendi tablosuyla Türkçe'ye açılır, `-9999` değerleri null.

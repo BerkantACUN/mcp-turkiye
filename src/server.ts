@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { KAYNAKLAR } from './sources/index.js';
+import { SURUM } from './surum.js';
 
-export const SURUM = '0.1.0';
+export { SURUM };
 
 export function sunucuOlustur(kaynaklar = KAYNAKLAR): McpServer {
   const server = new McpServer(

@@ -1,7 +1,7 @@
 {
   "name": "mcp-turkiye",
-  "version": "0.1.0",
-  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları, AFAD deprem, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
+  "version": "0.2.0",
+  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları, AFAD deprem, MGM hava durumu, akaryakıt fiyatları, İBB/İzmir açık veri, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
   "keywords": [
     "mcp",
     "mcp-server",
@@ -14,6 +14,11 @@
     "döviz",
     "resmi-tatil",
     "tckn",
+    "mgm",
+    "hava-durumu",
+    "akaryakit",
+    "acik-veri",
+    "ckan",
     "vkn",
     "iban",
     "claude",
