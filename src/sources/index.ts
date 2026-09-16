@@ -3,6 +3,7 @@ import { acikveri } from './acikveri/index.js';
 import { afad } from './afad/index.js';
 import { bist } from './bist/index.js';
 import { dogrulama } from './dogrulama/index.js';
+import { evdsKaynagi } from './evds/index.js';
 import { ibb } from './ibb/index.js';
 import { mgm } from './mgm/index.js';
 import { opet } from './opet/index.js';
@@ -17,6 +18,7 @@ import { tcmb } from './tcmb/index.js';
  */
 export const KAYNAKLAR: readonly Kaynak[] = [
   tcmb,
+  evdsKaynagi,
   bist,
   afad,
   mgm,

@@ -4,6 +4,12 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-09-16
+
+### Added
+
+- **evds:** `evds_kategoriler`, `evds_veri_gruplari`, `evds_seriler`, `evds_seri` — TCMB EVDS 3 web servisi: konu ağacı, veri grupları, seri listesi ve gözlemler (formül/frekans/toplama). Ücretsiz `EVDS_API_KEY` ister; anahtar yoksa nereden alınacağını söyler, diğer araçlar etkilenmez. Anahtar yalnızca `key` başlığında gider.
+
 ## [0.3.0] — 2026-09-16
 
 Üç yeni kaynak, on sekiz araç.

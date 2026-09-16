@@ -1,0 +1,61 @@
+{
+ "totalCount": 7,
+ "items": [
+  {
+   "Tarih": "10-09-2026",
+   "TP_DK_USD_S_YTL": "48.47770000",
+   "TP_DK_EUR_S_YTL": "56.40750000",
+   "UNIXTIME": {
+    "$numberLong": "1788987600"
+   }
+  },
+  {
+   "Tarih": "11-09-2026",
+   "TP_DK_USD_S_YTL": "48.49410000",
+   "TP_DK_EUR_S_YTL": "56.41280000",
+   "UNIXTIME": {
+    "$numberLong": "1789074000"
+   }
+  },
+  {
+   "Tarih": "12-09-2026",
+   "TP_DK_USD_S_YTL": null,
+   "TP_DK_EUR_S_YTL": null,
+   "UNIXTIME": {
+    "$numberLong": "1789160400"
+   }
+  },
+  {
+   "Tarih": "13-09-2026",
+   "TP_DK_USD_S_YTL": null,
+   "TP_DK_EUR_S_YTL": null,
+   "UNIXTIME": {
+    "$numberLong": "1789246800"
+   }
+  },
+  {
+   "Tarih": "14-09-2026",
+   "TP_DK_USD_S_YTL": "48.51780000",
+   "TP_DK_EUR_S_YTL": "56.27660000",
+   "UNIXTIME": {
+    "$numberLong": "1789333200"
+   }
+  },
+  {
+   "Tarih": "15-09-2026",
+   "TP_DK_USD_S_YTL": "48.62180000",
+   "TP_DK_EUR_S_YTL": "56.12940000",
+   "UNIXTIME": {
+    "$numberLong": "1789419600"
+   }
+  },
+  {
+   "Tarih": "16-09-2026",
+   "TP_DK_USD_S_YTL": "48.64600000",
+   "TP_DK_EUR_S_YTL": "56.12160000",
+   "UNIXTIME": {
+    "$numberLong": "1789506000"
+   }
+  }
+ ]
+}

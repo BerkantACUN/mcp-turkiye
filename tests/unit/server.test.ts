@@ -68,6 +68,10 @@ describe('mcp-turkiye server', () => {
     expect(tools.map((t) => t.name)).toEqual([
       'tcmb_kurlar',
       'tcmb_kur',
+      'evds_kategoriler',
+      'evds_veri_gruplari',
+      'evds_seriler',
+      'evds_seri',
       'bist_hisse',
       'afad_depremler',
       'mgm_hava_durumu',

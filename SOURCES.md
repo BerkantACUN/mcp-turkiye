@@ -11,6 +11,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** TCMB, gösterge kurlarını kamuya açık olarak yayımlar; kaynak belirtilmesi beklenir. Kurlar "gösterge" niteliğindedir, işlem kuru değildir — yanıtlar bunu kurumun kendi ifadesiyle taşır.
 - **Davranış:** Bugünkü bülten 5 dakika, geçmiş bültenler 24 saat önbellekte. Hafta sonu ve tatilde bülten olmadığı için 404 gelen tarihler "bülten yok" olarak açıklanır, hata olarak değil.
 
+## evds — TCMB Elektronik Veri Dağıtım Sistemi
+
+- **Veri:** Merkez Bankası'nın istatistik servisi: 154 konu kategorisi, 678 veri grubu, 40 binden fazla seri (TÜFE, faiz, kurlar, konut, ödemeler dengesi, anketler…). Kategori/grup/seri katalogları ve seri gözlemleri; formül (yüzde değişim, yıllık değişim, hareketli ortalama…), frekans ve toplama seçenekleri.
+- **Uç nokta:** `https://evds3.tcmb.gov.tr/igmevdsms-dis/` (EVDS 3 web servisi; `categories`, `datagroups`, `serieList`, `series=…`). Anahtar `key` HTTP başlığıyla gönderilir.
+- **Şart:** Ücretsiz kişisel API anahtarı gerekir (evds3.tcmb.gov.tr → Profilim → API Key Kopyala). Kullanım TCMB'nin EVDS kullanım koşullarına tabidir; kaynak belirtilerek kullanılır. Bir istekte en fazla 150 gözlem döner (bitişten geriye).
+- **Davranış:** Anahtar `EVDS_API_KEY` ortam değişkeninden her çağrıda okunur, saklanmaz, hiçbir yanıtta/URL'de yer almaz; anahtar yoksa araçlar nereden alınacağını söyleyen hata döner, 403'te "anahtar reddedildi" der. Kataloglar 24 saat, gözlemler 10 dakika önbellekte.
+
 ## bist — Borsa İstanbul günlük fiyatlar (İş Yatırım verisi)
 
 - **Veri:** Bir hissenin gün sonu fiyatları (kapanış, ağırlıklı ortalama, gün içi en düşük/en yüksek, TL hacim, piyasa değeri) ile aynı günün BIST 100 kapanışı ve USD/TRY kuru.

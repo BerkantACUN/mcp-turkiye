@@ -1,8 +1,8 @@
 # mcp-turkiye
 
-**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir açık veri portalları, Resmî Gazete fihristi ve metinleri, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
+**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, TCMB EVDS istatistikleri (enflasyon, faiz, 40 binden fazla seri), BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir açık veri portalları, Resmî Gazete fihristi ve metinleri, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
 
-*Turkey's public data as one MCP server: central-bank FX rates, Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, Istanbul's and İzmir's open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
+*Turkey's public data as one MCP server: central-bank FX rates, the central bank's EVDS statistics service (inflation, rates, 40,000+ series), Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, Istanbul's and İzmir's open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
 
 [![CI](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml/badge.svg)](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mcp-turkiye)](https://www.npmjs.com/package/mcp-turkiye)
@@ -13,7 +13,7 @@
 
 ## Kurulum
 
-Node.js 20+ yeterli; kurulacak başka bir şey yok, anahtar gerekmiyor.
+Node.js 20+ yeterli; kurulacak başka bir şey yok. Anahtar yalnızca TCMB EVDS araçları için gerekir (ücretsiz, aşağıda); diğer her şey anahtarsız çalışır.
 
 **Claude Code**
 
@@ -50,6 +50,7 @@ Sonra asistanınıza Türkçe sorun:
 > "İBB açık veride otopark verisi var mı, tablosunu göster."
 > "Bugün Resmî Gazete'de hangi yönetmelikler çıktı, ilkini özetle."
 > "THYAO son bir ayda ne yaptı, BIST 100'e göre?"
+> "Yıllık enflasyon son 8 ayda nasıl seyretti?" *(EVDS anahtarıyla)*
 > "İstanbul'da şu an trafik nasıl?"
 > "29 Ekim 2026 hangi güne geliyor, iş günü mü?"
 > "TR33 0006 1005 1978 6457 8413 26 geçerli bir IBAN mı, hangi banka?"
@@ -60,6 +61,10 @@ Sonra asistanınıza Türkçe sorun:
 |---|---|---|
 | `tcmb_kurlar` | Günün (ya da verilen tarihin) TCMB gösterge kur bülteni, tüm para birimleri | TCMB |
 | `tcmb_kur` | Tek para biriminin kuru — `birim` alanına dikkat, JPY 100 birim için verilir | TCMB |
+| `evds_kategoriler` | EVDS konu ağacı (fiyatlar, faiz, kurlar, ödemeler dengesi, anketler, konut…) | TCMB EVDS* |
+| `evds_veri_gruplari` | Bir kategorideki veri grupları: kod, frekans, birim, tarih aralığı | TCMB EVDS* |
+| `evds_seriler` | Bir veri grubundaki seriler, ad filtresiyle | TCMB EVDS* |
+| `evds_seri` | Bir ya da birkaç serinin gözlemleri; formül (yıllık % değişim vb.), frekans ve toplama seçenekleri | TCMB EVDS* |
 | `bist_hisse` | Bir hissenin gün sonu fiyat geçmişi (kapanış, AOF, min/max, hacim, piyasa değeri) + aynı günün BIST 100 ve USD/TRY'si | İş Yatırım |
 | `afad_depremler` | Tarih aralığı, en küçük büyüklük ve limitle deprem listesi; yeniden eskiye | AFAD |
 | `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
@@ -77,7 +82,33 @@ Sonra asistanınıza Türkçe sorun:
 | `dogrula_iban` | TR IBAN mod-97 kontrolü + banka kodu | yok |
 | `plaka_il` | Plaka kodu ↔ il, 81 il | yok |
 
+\* EVDS araçları ücretsiz bir kişisel anahtar ister — bkz. [TCMB EVDS anahtarı](#tcmb-evds-anahtarı). Anahtar yoksa bu dört araç nereden alınacağını söyleyen bir hata döner, diğerleri etkilenmez.
+
 Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesaplanır, hiçbir kuruma sorulmaz, numara makineden çıkmaz. "Geçerli" bir numaranın gerçek bir kişiye ya da kuruma ait olduğu anlamına gelmez; her yanıt bunu açıkça söyler.
+
+## TCMB EVDS anahtarı
+
+EVDS, Merkez Bankası'nın istatistik servisidir (TÜFE, politika faizi, kurlar, konut fiyat endeksi, ödemeler dengesi, anketler — 40 binden fazla seri) ve ücretsiz bir kişisel anahtar ister:
+
+1. https://evds3.tcmb.gov.tr → **Benim Sayfam → Kayıt** (e-posta doğrulaması).
+2. Giriş yapınca kullanıcı adının altındaki **Profilim**'e tıkla.
+3. Sayfanın altındaki **API Key Kopyala** butonuna bas.
+
+Anahtarı MCP yapılandırmasında ortam değişkeni olarak ver:
+
+```json
+{
+  "mcpServers": {
+    "turkiye": {
+      "command": "npx",
+      "args": ["-y", "mcp-turkiye"],
+      "env": { "EVDS_API_KEY": "anahtarınız" }
+    }
+  }
+}
+```
+
+Anahtar yalnızca EVDS isteklerinin `key` başlığında kullanılır; hiçbir yanıtta, günlükte ya da URL'de yer almaz. EVDS bir istekte en fazla 150 gözlem verir; daha uzun aralıklar için birden çok çağrı gerekir.
 
 ## Her yanıt bir zarf içinde gelir
 
@@ -102,7 +133,7 @@ Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesap
 
 ## Yol haritası
 
-Sonraki kaynaklar, diğer CKAN portalları, mevzuat.gov.tr tam metin, KAP bildirimleri, TCMB EVDS (ücretsiz anahtar; enflasyon, faiz ve 40 binden fazla seri), Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
+Sonraki kaynaklar, diğer CKAN portalları, mevzuat.gov.tr tam metin, KAP bildirimleri, Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Geliştirme
 
@@ -115,7 +146,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys). Eighteen tools today: central-bank FX bulletins (all currencies or one, today or any past date), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul and İzmir, the Official Gazette's daily index and article text, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Twenty-two tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul and İzmir, the Official Gazette's daily index and article text, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

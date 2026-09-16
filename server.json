@@ -2,23 +2,32 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.BerkantACUN/mcp-turkiye",
   "title": "mcp-turkiye",
-  "description": "Türkiye'nin kamu verisi: TCMB kur, BIST, AFAD deprem, MGM hava, akaryakıt, Resmî Gazete, açık veri.",
+  "description": "Türkiye'nin kamu verisi: TCMB kur ve EVDS, BIST, AFAD, MGM hava, akaryakıt, Resmî Gazete, açık veri.",
   "repository": {
     "url": "https://github.com/BerkantACUN/mcp-turkiye",
     "source": "github"
   },
   "websiteUrl": "https://github.com/BerkantACUN/mcp-turkiye#readme",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-turkiye",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
-      }
+      },
+      "environmentVariables": [
+        {
+          "name": "EVDS_API_KEY",
+          "description": "TCMB EVDS kişisel API anahtarı (ücretsiz, evds3.tcmb.gov.tr → Profilim → API Key Kopyala). Yalnızca evds_* araçları için; isteğe bağlı.",
+          "isRequired": false,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
     }
   ]
 }

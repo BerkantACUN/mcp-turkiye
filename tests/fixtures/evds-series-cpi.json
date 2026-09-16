@@ -1,0 +1,61 @@
+{
+ "totalCount": 8,
+ "items": [
+  {
+   "Tarih": "2026-1",
+   "TP_TUKFIY2025_GENEL-3": "30.65278012",
+   "UNIXTIME": {
+    "$numberLong": "1767214800"
+   }
+  },
+  {
+   "Tarih": "2026-2",
+   "TP_TUKFIY2025_GENEL-3": "31.53483745",
+   "UNIXTIME": {
+    "$numberLong": "1769893200"
+   }
+  },
+  {
+   "Tarih": "2026-3",
+   "TP_TUKFIY2025_GENEL-3": "30.86545352",
+   "UNIXTIME": {
+    "$numberLong": "1772312400"
+   }
+  },
+  {
+   "Tarih": "2026-4",
+   "TP_TUKFIY2025_GENEL-3": "32.37174024",
+   "UNIXTIME": {
+    "$numberLong": "1774990800"
+   }
+  },
+  {
+   "Tarih": "2026-5",
+   "TP_TUKFIY2025_GENEL-3": "32.61480200",
+   "UNIXTIME": {
+    "$numberLong": "1777582800"
+   }
+  },
+  {
+   "Tarih": "2026-6",
+   "TP_TUKFIY2025_GENEL-3": "32.10903603",
+   "UNIXTIME": {
+    "$numberLong": "1780261200"
+   }
+  },
+  {
+   "Tarih": "2026-7",
+   "TP_TUKFIY2025_GENEL-3": "31.75409679",
+   "UNIXTIME": {
+    "$numberLong": "1782853200"
+   }
+  },
+  {
+   "Tarih": "2026-8",
+   "TP_TUKFIY2025_GENEL-3": "31.50734282",
+   "UNIXTIME": {
+    "$numberLong": "1785531600"
+   }
+  }
+ ]
+}

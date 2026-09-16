@@ -139,3 +139,29 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Resmî Gazete, İBB traf
     expect(g[g.length - 1]?.bist100).toBeGreaterThan(1000);
   }, 20_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE || !process.env.EVDS_API_KEY)(
+  'canlı: TCMB EVDS (anahtar varsa)',
+  () => {
+    it('answers the USD selling rate for the last week through the EVDS 3 service', async () => {
+      const { gozlemleriDonustur } = await import('../../src/sources/evds/parse.js');
+      const bitis = new Date();
+      const baslangic = new Date(bitis.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const tr = (d: Date) =>
+        `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+      const r = await fetch(
+        `https://evds3.tcmb.gov.tr/igmevdsms-dis/series=TP.DK.USD.S.YTL&startDate=${tr(baslangic)}&endDate=${tr(bitis)}&type=json`,
+        {
+          headers: {
+            key: process.env.EVDS_API_KEY ?? '',
+            'user-agent': 'mcp-turkiye contract test',
+          },
+        },
+      );
+      expect(r.status).toBe(200);
+      const { gozlemler } = gozlemleriDonustur(await r.json(), ['TP.DK.USD.S.YTL']);
+      expect(gozlemler.length).toBeGreaterThan(2);
+      expect(gozlemler[gozlemler.length - 1]?.degerler['TP.DK.USD.S.YTL']).toBeGreaterThan(1);
+    }, 20_000);
+  },
+);
