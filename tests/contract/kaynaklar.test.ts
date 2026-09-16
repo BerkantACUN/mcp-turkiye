@@ -99,3 +99,43 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: açık veri (CKAN)', () 
     }
   }, 30_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Resmî Gazete, İBB trafik, BIST', () => {
+  it('Resmî Gazete: yesterday’s issue parses through the node:https path with the embedded intermediate', async () => {
+    const { metinGetir } = await import('../../src/core/http.js');
+    const { fihristiAyristir, gazeteUrl } = await import('../../src/sources/resmigazete/parse.js');
+    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/sources/resmigazete/sertifika.js');
+    // Yesterday, so a not-yet-uploaded "today" cannot fail the test at 06:00 UTC.
+    const dun = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const html = await metinGetir(gazeteUrl(dun), {
+      kaynakId: 'resmigazete',
+      charset: 'windows-1254',
+      ekSertifikalar: [GEOTRUST_TLS_RSA_CA_G1],
+      cacheMs: 0,
+    });
+    const f = fihristiAyristir(html, dun);
+    expect(f.sayi).toMatch(/^\d{5}$/);
+  }, 30_000);
+
+  it('İBB: the traffic index is a number between 0 and 100', async () => {
+    const { trafikIndeksiniOku } = await import('../../src/sources/ibb/index.js');
+    const r = await fetch('https://tkmservices.ibb.gov.tr/web/api/TrafficData/v1/TrafficIndex', {
+      headers: { 'user-agent': 'mcp-turkiye contract test' },
+    });
+    expect(r.ok).toBe(true);
+    expect(trafikIndeksiniOku(await r.json())).toBeGreaterThanOrEqual(0);
+  }, 20_000);
+
+  it('BIST: İş Yatırım answers THYAO for the last 30 days with closes and the BIST 100', async () => {
+    const { satirlariDonustur, sorguUrl } = await import('../../src/sources/bist/index.js');
+    const bitis = new Date().toISOString().slice(0, 10);
+    const baslangic = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const r = await fetch(sorguUrl('THYAO', baslangic, bitis), {
+      headers: { 'user-agent': 'mcp-turkiye contract test' },
+    });
+    expect(r.ok).toBe(true);
+    const g = satirlariDonustur(await r.json());
+    expect(g.length).toBeGreaterThan(10);
+    expect(g[g.length - 1]?.bist100).toBeGreaterThan(1000);
+  }, 20_000);
+});

@@ -11,6 +11,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** TCMB, gösterge kurlarını kamuya açık olarak yayımlar; kaynak belirtilmesi beklenir. Kurlar "gösterge" niteliğindedir, işlem kuru değildir — yanıtlar bunu kurumun kendi ifadesiyle taşır.
 - **Davranış:** Bugünkü bülten 5 dakika, geçmiş bültenler 24 saat önbellekte. Hafta sonu ve tatilde bülten olmadığı için 404 gelen tarihler "bülten yok" olarak açıklanır, hata olarak değil.
 
+## bist — Borsa İstanbul günlük fiyatlar (İş Yatırım verisi)
+
+- **Veri:** Bir hissenin gün sonu fiyatları (kapanış, ağırlıklı ortalama, gün içi en düşük/en yüksek, TL hacim, piyasa değeri) ile aynı günün BIST 100 kapanışı ve USD/TRY kuru.
+- **Uç nokta:** `https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/Common/Data.aspx/HisseTekil` — İş Yatırım'ın kendi hisse sayfalarının kullandığı açık uç nokta.
+- **Şart:** Tek bir aracı kurumun kamuya sunduğu gün sonu verisidir; Borsa İstanbul'un lisanslı veri yayını değildir, anlık fiyat içermez ve yatırım tavsiyesi değildir — yanıtlar bunu söyler. Resmî API sözleşmesi yoktur; İş Yatırım talep ederse kaynak kaldırılır.
+- **Davranış:** 15 dakika önbellek. Tarihler ISO'ya çevrilir ve eskiden yeniye sıralanır.
+
 ## afad — AFAD Deprem Dairesi Başkanlığı
 
 - **Veri:** Deprem kataloğu (zaman, büyüklük, tür, derinlik, konum, il/ilçe).
@@ -32,12 +39,27 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Fiyatlar Opet'in kamuya duyurduğu kendi pompa fiyatlarıdır; tek dağıtıcıyı temsil eder, sektör ortalaması değildir — yanıtlar bunu söyler. Resmî API sözleşmesi yoktur; haftalık sözleşme testi biçimi izler. Opet talep ederse kaynak kaldırılır.
 - **Davranış:** 30 dakika önbellek. İlçe filtresi büyük/küçük harf ve Türkçe karakterden bağımsız.
 
+## ibb — İBB Ulaşım Yönetim Merkezi (trafik indeksi)
+
+- **Veri:** İstanbul geneli anlık trafik yoğunluk indeksi (0–100).
+- **Uç nokta:** `https://tkmservices.ibb.gov.tr/web/api/TrafficData/v1/TrafficIndex` — İBB trafik haritasının (uym.ibb.gov.tr) kullandığı açık uç nokta; `{"Result": 76}` biçiminde tek sayı.
+- **Şart:** İBB'nin kamuya sunduğu anlık gösterge; kaynak belirtilerek kullanılır. Resmî API sözleşmesi yoktur.
+- **Davranış:** 60 saniye önbellek (anlık veridir; sınır yalnızca kurumu korumak içindir). 0–100 dışı ya da sayı olmayan yanıt biçim hatası olarak bildirilir.
+
 ## acikveri — Belediye açık veri portalları (CKAN)
 
 - **Veri:** İBB Açık Veri Portalı (`data.ibb.gov.tr`, 557 veri seti) ve İzmir Büyükşehir Açık Veri Portalı (`acikveri.bizizmir.com`, 250 veri seti): veri seti arama, ayrıntı, dosyalar ve tablo servisi (DataStore) satırları.
 - **Uç nokta:** CKAN Action API v3 — `package_search`, `package_show`, `datastore_search`.
 - **Şart:** İBB'nin tüm veri setleri "Istanbul Metropolitan Municipality Open Data License" altındadır; İzmir'de çoğu "Izmir Metropolitan Municipality License", bazıları CC-BY, birkaçı belirtilmemiş. Veri seti yanıtı lisansı **adıyla** taşır; kullanmadan önce okunmalıdır.
 - **Davranış:** Arama ve ayrıntı 10 dakika, satırlar 5 dakika önbellekte. Satır okuma en fazla 200 kayıt/çağrı; büyük tablolar `offset` ile sayfalanır. Tablo servisi kapalı kaynaklar için indirme bağlantısı verilir, dosya sunucu tarafından indirilmez.
+
+## resmigazete — T.C. Resmî Gazete
+
+- **Veri:** Günlük fihrist (sayı, bölüm, tür, madde başlıkları ve bağlantıları) ve .htm maddelerin düz metni.
+- **Uç nokta:** `https://www.resmigazete.gov.tr/eskiler/YYYY/AA/YYYYAAGG.htm` (fihrist) ve fihristteki madde bağlantıları. Sayfalar windows-1254 kodlamasındadır; sunucu bu kodlamayla çözer.
+- **Şart:** Resmî Gazete metinleri kamuya açıktır. Yalnızca `www.resmigazete.gov.tr` adresleri okunur; PDF maddeler için bağlantı verilir, dosya indirilmez. Mükerrer sayılar fihristte yer almaz.
+- **TLS notu:** Sunucu sertifika zincirini eksik (ara sertifikasız) gönderir; tarayıcılar eksiği kendileri tamamlar, Node tamamlamaz. Bu yüzden kamuya açık GeoTrust ara sertifikası (`src/sources/resmigazete/sertifika.ts`, 2027-11-02'ye kadar geçerli) Node'un kök deposuna **eklenir** — doğrulama atlanmaz, sertifika kontrolü kapatılmaz. Ara sertifika değişirse haftalık sözleşme testi kırılır.
+- **Davranış:** Bugünün fihristi 10 dakika (gün içinde eklenebilir), geçmiş fihristler ve madde metinleri 24 saat önbellekte. Metin 20.000 karakterlik parçalarla verilir (`baslangic` ile devam).
 
 ## tatil — Resmî tatiller
 

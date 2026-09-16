@@ -4,6 +4,17 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-09-16
+
+Üç yeni kaynak, on sekiz araç.
+
+### Added
+
+- **resmigazete:** `resmi_gazete_fihrist`, `resmi_gazete_metin` — günlük fihrist (bölüm/tür/madde) ve madde metinleri; windows-1254 çözümü, yalnızca resmigazete.gov.tr adresleri, PDF'ler bağlantı olarak. Sunucunun eksik gönderdiği ara sertifika Node'un kök deposuna eklenerek (doğrulama atlanmadan) çözüldü.
+- **bist:** `bist_hisse` — İş Yatırım verisiyle gün sonu fiyat geçmişi, BIST 100 ve USD/TRY yanında.
+- **ibb:** `ibb_trafik_indeksi` — İstanbul geneli anlık trafik yoğunluğu.
+- HTTP katmanı: `charset` (UTF-8 olmayan kaynaklar) ve `ekSertifikalar` (eksik zincir tamamlama, node:https üzerinden) seçenekleri.
+
 ## [0.2.1] — 2026-09-16
 
 ### Fixed

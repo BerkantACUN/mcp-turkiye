@@ -13,6 +13,8 @@
  * inventing a number.
  */
 
+import { request as httpsRequest } from 'node:https';
+import { rootCertificates } from 'node:tls';
 import { SURUM } from '../surum.js';
 
 export class KaynakHatasi extends Error {
@@ -35,10 +37,20 @@ export interface IstekSecenekleri {
   readonly cacheMs?: number;
   /** Fetch implementation, injectable so tests never touch the network. */
   readonly fetchImpl?: typeof fetch;
+  /** Body encoding when the source is not UTF-8 (Resmî Gazete is windows-1254). */
+  readonly charset?: string;
+  /**
+   * Extra CA certificates (PEM) for a host that serves an incomplete chain.
+   * Appended to Node's own trust store, never replacing it; the request then
+   * goes through node:https, since fetch offers no per-request CA option.
+   */
+  readonly ekSertifikalar?: readonly string[];
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_CACHE_MS = 60_000;
+/** The runtime's own fetch, captured at load so a stubbed one can be told apart. */
+const YERLI_FETCH = fetch;
 const USER_AGENT = `mcp-turkiye/${SURUM} (+https://github.com/BerkantACUN/mcp-turkiye)`;
 
 interface OnbellekKaydi {
@@ -88,7 +100,13 @@ async function getirDene(
   secenek: IstekSecenekleri,
   kalanDeneme: number,
 ): Promise<string> {
-  const fetchImpl = secenek.fetchImpl ?? fetch;
+  // A replaced global fetch (tests stub it) always wins, so no test ever
+  // reaches a real host through the node:https path either.
+  const fetchImpl =
+    secenek.fetchImpl ??
+    (secenek.ekSertifikalar && fetch === YERLI_FETCH
+      ? ekSertifikaliFetch(secenek.ekSertifikalar)
+      : fetch);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), secenek.timeoutMs ?? DEFAULT_TIMEOUT_MS);
 
@@ -100,6 +118,9 @@ async function getirDene(
     });
 
     if (response.ok) {
+      if (secenek.charset) {
+        return new TextDecoder(secenek.charset).decode(await response.arrayBuffer());
+      }
       return await response.text();
     }
     if (response.status >= 500 && kalanDeneme > 1) {
@@ -125,3 +146,54 @@ async function getirDene(
     clearTimeout(timer);
   }
 }
+
+/* v8 ignore start -- real TLS only; exercised by the weekly live contract test, not by unit tests with a stubbed fetch */
+/**
+ * A fetch-shaped GET over node:https with extra CAs. Only what the sources
+ * need: headers, abort signal, redirects followed up to a few hops, and a
+ * Response whose status/ok/text/arrayBuffer behave like fetch's.
+ */
+function ekSertifikaliFetch(ekSertifikalar: readonly string[]): typeof fetch {
+  const ca = [...rootCertificates, ...ekSertifikalar];
+  const iste = (
+    url: string,
+    init: RequestInit | undefined,
+    kalanYonlendirme: number,
+  ): Promise<Response> =>
+    new Promise((resolve, reject) => {
+      const req = httpsRequest(
+        url,
+        {
+          method: 'GET',
+          headers: init?.headers as Record<string, string> | undefined,
+          ca,
+          signal: init?.signal ?? undefined,
+        },
+        (res) => {
+          const status = res.statusCode ?? 0;
+          const konum = res.headers.location;
+          if (status >= 300 && status < 400 && konum && kalanYonlendirme > 0) {
+            res.resume();
+            resolve(iste(new URL(konum, url).toString(), init, kalanYonlendirme - 1));
+            return;
+          }
+          const parcalar: Buffer[] = [];
+          res.on('data', (c: Buffer) => parcalar.push(c));
+          res.on('end', () =>
+            resolve(
+              new Response(Buffer.concat(parcalar), {
+                status,
+                headers: { 'content-type': String(res.headers['content-type'] ?? '') },
+              }),
+            ),
+          );
+          res.on('error', reject);
+        },
+      );
+      req.on('error', reject);
+      req.end();
+    });
+  return ((input: string | URL | Request, init?: RequestInit) =>
+    iste(String(input), init, 3)) as typeof fetch;
+}
+/* v8 ignore stop */

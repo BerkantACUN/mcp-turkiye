@@ -1,8 +1,8 @@
 # mcp-turkiye
 
-**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İBB/İzmir açık veri portalları, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
+**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir açık veri portalları, Resmî Gazete fihristi ve metinleri, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
 
-*Turkey's public data as one MCP server: central-bank FX rates, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's and İzmir's open-data portals (search, datasets, DataStore rows), public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
+*Turkey's public data as one MCP server: central-bank FX rates, Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, Istanbul's and İzmir's open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
 
 [![CI](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml/badge.svg)](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mcp-turkiye)](https://www.npmjs.com/package/mcp-turkiye)
@@ -48,6 +48,9 @@ Sonra asistanınıza Türkçe sorun:
 > "Kadıköy'de hava nasıl, hafta sonu yağmur var mı?"
 > "Bornova'da motorin kaç lira?"
 > "İBB açık veride otopark verisi var mı, tablosunu göster."
+> "Bugün Resmî Gazete'de hangi yönetmelikler çıktı, ilkini özetle."
+> "THYAO son bir ayda ne yaptı, BIST 100'e göre?"
+> "İstanbul'da şu an trafik nasıl?"
 > "29 Ekim 2026 hangi güne geliyor, iş günü mü?"
 > "TR33 0006 1005 1978 6457 8413 26 geçerli bir IBAN mı, hangi banka?"
 
@@ -57,12 +60,16 @@ Sonra asistanınıza Türkçe sorun:
 |---|---|---|
 | `tcmb_kurlar` | Günün (ya da verilen tarihin) TCMB gösterge kur bülteni, tüm para birimleri | TCMB |
 | `tcmb_kur` | Tek para biriminin kuru — `birim` alanına dikkat, JPY 100 birim için verilir | TCMB |
+| `bist_hisse` | Bir hissenin gün sonu fiyat geçmişi (kapanış, AOF, min/max, hacim, piyasa değeri) + aynı günün BIST 100 ve USD/TRY'si | İş Yatırım |
 | `afad_depremler` | Tarih aralığı, en küçük büyüklük ve limitle deprem listesi; yeniden eskiye | AFAD |
 | `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
 | `opet_akaryakit` | İlçe bazında benzin/motorin/gazyağı/fuel oil pompa fiyatları; İstanbul iki yaka | Opet |
+| `ibb_trafik_indeksi` | İstanbul geneli anlık trafik yoğunluğu (0–100), her çağrıda taze | İBB UYM |
 | `acikveri_ara` | İBB ya da İzmir açık veri portalında veri seti arama | İBB, İzmir |
 | `acikveri_veriseti` | Veri seti ayrıntısı: lisans, dosyalar, indirme bağlantıları, tablo servisi var mı | İBB, İzmir |
 | `acikveri_kayitlar` | Tablo servisi açık kaynağın sütun ve satırları (DataStore), sayfalama ve metin filtresi | İBB, İzmir |
+| `resmi_gazete_fihrist` | Günün Resmî Gazete fihristi: sayı, bölüm/tür, madde başlıkları ve bağlantıları | Resmî Gazete |
+| `resmi_gazete_metin` | Bir maddenin (yönetmelik, tebliğ, karar) düz metni, 20 bin karakterlik parçalarla | Resmî Gazete |
 | `resmi_tatiller` | Yılın resmî tatilleri: ulusal bayramlar + Diyanet takvimine göre dinî bayramlar (arefe yarım günleri dahil) | yok |
 | `tatil_mi` | Bir tarih hafta sonu mu, tatil mi, iş günü mü | yok |
 | `dogrula_tckn` | T.C. Kimlik Numarası kontrol basamakları | yok |
@@ -86,6 +93,7 @@ Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesap
 
 ## Tasarım kararları
 
+- **Her yanıt canlı.** Pakette gömülü veri yoktur (tatil takvimi ve plaka tablosu dışında); her araç çağrıldığı anda kurumdan çeker. Önbellek yalnızca kurumu korumak için ve kısadır: trafik indeksi 1 dk, deprem 1 dk, kur 5 dk, hava 10 dk, akaryakıt 30 dk; `alindi` alanı verinin tam olarak ne zaman alındığını söyler.
 - **Anahtar yok, kayıt yok.** Bütün kaynaklar kamuya açık ve anahtarsız. Ücretsiz anahtar isteyen kaynaklar (TCMB EVDS gibi) eklendiğinde isteğe bağlı olacak; anahtarsız çalışan araçlar anahtarsız kalır.
 - **Kamu sunucularını yormaz.** Her istek zaman aşımlı, 5xx'te bir kez yeniden denenir, 4xx'te denenmez; aynı URL kısa süre önbellekte tutulur. Dünkü bülten değişmez, bir gün saklanır; bugünkü 5 dakika.
 - **Kaynak bozulursa biz öğreniriz.** Her kaynağın gerçek uç noktasına karşı haftalık *sözleşme testi* koşar (`npm run test:live`); format değişince CI kırmızıya döner, kullanıcının asistanı yanlış cevap vermeden.
@@ -94,7 +102,7 @@ Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesap
 
 ## Yol haritası
 
-Sonraki kaynaklar, hepsi bugün anahtarsız JSON verdiği doğrulanmış: İş Yatırım hisse fiyat geçmişi, İBB trafik indeksi, diğer CKAN portalları, Diyanet vakitleri, Kandilli, Resmî Gazete günlük fihristi, mevzuat.gov.tr tam metin, TCMB EVDS (ücretsiz anahtar). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
+Sonraki kaynaklar, diğer CKAN portalları, mevzuat.gov.tr tam metin, KAP bildirimleri, TCMB EVDS (ücretsiz anahtar; enflasyon, faiz ve 40 binden fazla seri), Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Geliştirme
 
@@ -107,7 +115,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys). Fourteen tools today: central-bank FX bulletins (all currencies or one, today or any past date), AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, CKAN open-data search/dataset/DataStore access for Istanbul and İzmir, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys). Eighteen tools today: central-bank FX bulletins (all currencies or one, today or any past date), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul and İzmir, the Official Gazette's daily index and article text, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

@@ -2,7 +2,7 @@
   "mcpServers": {
     "turkiye": {
       "command": "npx",
-      "args": ["-y", "mcp-turkiye@0.2.1"]
+      "args": ["-y", "mcp-turkiye@0.3.0"]
     }
   }
 }
