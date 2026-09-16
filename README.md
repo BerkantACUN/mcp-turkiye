@@ -44,6 +44,7 @@ claude mcp add turkiye -- npx -y mcp-turkiye
 Sonra asistanınıza Türkçe sorun:
 
 > "Bugünkü TCMB dolar satış kuru ne, hangi bültenden?"
+> "Yıllık enflasyon kaç, politika faizi ne, son açıklanan ay hangisi?"
 > "Son üç günde 4'ten büyük deprem oldu mu?"
 > "Kadıköy'de hava nasıl, hafta sonu yağmur var mı?"
 > "Bornova'da motorin kaç lira?"
@@ -68,6 +69,7 @@ Sonra asistanınıza Türkçe sorun:
 | `evds_veri_gruplari` | Bir kategorideki veri grupları: kod, frekans, birim, tarih aralığı | TCMB EVDS* |
 | `evds_seriler` | Bir veri grubundaki seriler, ad filtresiyle | TCMB EVDS* |
 | `evds_seri` | Bir ya da birkaç serinin gözlemleri; formül (yıllık % değişim vb.), frekans ve toplama seçenekleri | TCMB EVDS* |
+| `evds_gosterge` | Başlıca göstergeler kod bilmeden, adıyla: yıllık/aylık enflasyon, ÜFE, politika faizi, dolar/euro/sterlin, konut fiyat endeksi, reel efektif kur; son değer ve tarih | TCMB EVDS* |
 | `bist_hisse` | Bir hissenin gün sonu fiyat geçmişi (kapanış, AOF, min/max, hacim, piyasa değeri) + aynı günün BIST 100 ve USD/TRY'si | İş Yatırım |
 | `afad_depremler` | Tarih aralığı, en küçük büyüklük ve limitle deprem listesi; yeniden eskiye | AFAD |
 | `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
@@ -89,7 +91,7 @@ Sonra asistanınıza Türkçe sorun:
 | `dogrula_iban` | TR IBAN mod-97 kontrolü + banka kodu | yok |
 | `plaka_il` | Plaka kodu ↔ il, 81 il | yok |
 
-\* EVDS araçları ücretsiz bir kişisel anahtar ister — bkz. [TCMB EVDS anahtarı](#tcmb-evds-anahtarı). Anahtar yoksa bu dört araç nereden alınacağını söyleyen bir hata döner, diğerleri etkilenmez.
+\* EVDS araçları ücretsiz bir kişisel anahtar ister — bkz. [TCMB EVDS anahtarı](#tcmb-evds-anahtarı). Anahtar yoksa bu beş araç nereden alınacağını söyleyen bir hata döner, diğerleri etkilenmez.
 
 Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesaplanır, hiçbir kuruma sorulmaz, numara makineden çıkmaz. "Geçerli" bir numaranın gerçek bir kişiye ya da kuruma ait olduğu anlamına gelmez; her yanıt bunu açıkça söyler.
 
@@ -162,7 +164,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Twenty-six tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Twenty-seven tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change, plus headline indicators by name — inflation, PPI, policy rate, FX, house-price index, real effective exchange rate; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

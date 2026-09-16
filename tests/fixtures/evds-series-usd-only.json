@@ -1,0 +1,26 @@
+{
+ "totalCount": 3,
+ "items": [
+  {
+   "Tarih": "15-09-2026",
+   "TP_DK_USD_S_YTL": "48.61220000",
+   "UNIXTIME": {
+    "$numberLong": "1789419600"
+   }
+  },
+  {
+   "Tarih": "16-09-2026",
+   "TP_DK_USD_S_YTL": "48.64600000",
+   "UNIXTIME": {
+    "$numberLong": "1789506000"
+   }
+  },
+  {
+   "Tarih": "17-09-2026",
+   "TP_DK_USD_S_YTL": null,
+   "UNIXTIME": {
+    "$numberLong": "1789592400"
+   }
+  }
+ ]
+}

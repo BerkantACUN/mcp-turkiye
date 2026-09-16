@@ -4,6 +4,14 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-09-17
+
+Kod bilmeden ekonomi: yirmi yedi araç.
+
+### Added
+
+- **evds:** `evds_gosterge` — başlıca göstergeler adıyla, seri kodu bilmeden: `enflasyon_yillik`, `enflasyon_aylik`, `tufe_endeks`, `ufe_yillik`, `politika_faizi`, `dolar`, `euro`, `sterlin`, `konut_fiyat_endeksi`, `konut_fiyat_yillik`, `reel_efektif_kur`. Yanıtta son değer ve tarihi, kullanılan seri kodu ve formül; varsayılan aralık son 400 gün. Canlı sözleşme testi on bir göstergenin hepsini her hafta yoklar.
+
 ## [0.5.0] — 2026-09-17
 
 İki kaynak, iki portal, iki prompt; on üç kaynak, yirmi altı araç.

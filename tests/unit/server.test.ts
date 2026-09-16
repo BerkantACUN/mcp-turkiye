@@ -72,6 +72,7 @@ describe('mcp-turkiye server', () => {
       'evds_veri_gruplari',
       'evds_seriler',
       'evds_seri',
+      'evds_gosterge',
       'bist_hisse',
       'afad_depremler',
       'mgm_hava_durumu',

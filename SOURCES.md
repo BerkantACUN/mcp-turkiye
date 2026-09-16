@@ -17,6 +17,7 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Uç nokta:** `https://evds3.tcmb.gov.tr/igmevdsms-dis/` (EVDS 3 web servisi; `categories`, `datagroups`, `serieList`, `series=…`). Anahtar `key` HTTP başlığıyla gönderilir.
 - **Şart:** Ücretsiz kişisel API anahtarı gerekir (evds3.tcmb.gov.tr → Profilim → API Key Kopyala). Kullanım TCMB'nin EVDS kullanım koşullarına tabidir; kaynak belirtilerek kullanılır. Bir istekte en fazla 150 gözlem döner (bitişten geriye).
 - **Davranış:** Anahtar `EVDS_API_KEY` ortam değişkeninden her çağrıda okunur, saklanmaz, hiçbir yanıtta/URL'de yer almaz; anahtar yoksa araçlar nereden alınacağını söyleyen hata döner, 403'te "anahtar reddedildi" der. Kataloglar 24 saat, gözlemler 10 dakika önbellekte.
+- **Göstergeler:** `evds_gosterge` on bir adı sabit seri koduna çevirir (örn. `enflasyon_yillik` → `TP.TUKFIY2025.GENEL`, formül 3; `politika_faizi` → `TP.BISPOLFAIZ.TUR`; `dolar` → `TP.DK.USD.S.YTL`). Her kod eklendiği gün EVDS kataloğundan çözülüp veriyle doğrulandı; haftalık canlı sözleşme testi hepsinin hâlâ yanıt verdiğini kontrol eder. TÜİK endeks tabanı değişince (2025=100 gibi) kod da değişir — o zaman tablo güncellenir, eski kod sessizce boş dönmez.
 
 ## bist — Borsa İstanbul günlük fiyatlar (İş Yatırım verisi)
 

@@ -1,6 +1,6 @@
 {
   "name": "mcp-turkiye",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "mcpName": "io.github.BerkantACUN/mcp-turkiye",
   "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları, TCMB EVDS istatistikleri, mevzuat.gov.tr (KVKK madde madde), AFAD deprem, MGM hava durumu, akaryakıt fiyatları, BIST, İstanbul trafik, İBB/İzmir açık veri, Resmî Gazete, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
   "keywords": [
@@ -25,6 +25,8 @@
     "resmi-gazete",
     "mevzuat",
     "kvkk",
+    "enflasyon",
+    "tufe",
     "hukuk",
     "asgari-ucret",
     "bist",

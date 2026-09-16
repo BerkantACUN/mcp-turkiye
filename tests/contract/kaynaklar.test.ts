@@ -175,6 +175,33 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE || !process.env.EVDS_API_KEY)(
       expect(gozlemler.length).toBeGreaterThan(2);
       expect(gozlemler[gozlemler.length - 1]?.degerler['TP.DK.USD.S.YTL']).toBeGreaterThan(1);
     }, 20_000);
+
+    it('every named indicator still resolves to a series that answers with a recent value', async () => {
+      const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+      const { InMemoryTransport } = await import('@modelcontextprotocol/sdk/inMemory.js');
+      const { sunucuOlustur } = await import('../../src/server.js');
+      const { GOSTERGELER } = await import('../../src/sources/evds/index.js');
+      const [ct, st] = InMemoryTransport.createLinkedPair();
+      await sunucuOlustur().connect(st);
+      const client = new Client({ name: 'contract', version: '0' });
+      await client.connect(ct);
+      try {
+        for (const gosterge of Object.keys(GOSTERGELER)) {
+          const r = (await client.callTool({
+            name: 'evds_gosterge',
+            arguments: { gosterge },
+          })) as unknown as {
+            isError?: boolean;
+            content: Array<{ text?: string }>;
+            structuredContent?: { veri: { son: { tarih: string; deger: number | null } | null } };
+          };
+          expect(r.isError, `${gosterge}: ${r.content[0]?.text}`).toBeFalsy();
+          expect(r.structuredContent?.veri.son?.deger, gosterge).toBeTypeOf('number');
+        }
+      } finally {
+        await client.close();
+      }
+    }, 120_000);
   },
 );
 

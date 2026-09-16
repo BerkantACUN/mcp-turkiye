@@ -80,6 +80,100 @@ const FREKANSLAR = {
 
 const tarihSemasi = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-AA-GG biçiminde olmalı');
 
+interface Gosterge {
+  readonly kod: string;
+  readonly aciklama: string;
+  readonly birim: string;
+  /** EVDS formula applied server-side (3 = year-on-year % change, 1 = month-on-month). */
+  readonly formul?: number;
+}
+
+/**
+ * Headline indicators by name, so a caller never has to know that annual
+ * inflation is `TP.TUKFIY2025.GENEL` with formula 3. Every code here was
+ * resolved from the EVDS catalogue and answered with data when added
+ * (2026-09-17); the weekly contract test keeps them honest.
+ */
+export const GOSTERGELER = {
+  enflasyon_yillik: {
+    kod: 'TP.TUKFIY2025.GENEL',
+    aciklama: 'TÜFE yıllık değişim (%), 2025=100 endeksi, TÜİK verisi',
+    birim: '%',
+    formul: 3,
+  },
+  enflasyon_aylik: {
+    kod: 'TP.TUKFIY2025.GENEL',
+    aciklama: 'TÜFE aylık değişim (%), 2025=100 endeksi, TÜİK verisi',
+    birim: '%',
+    formul: 1,
+  },
+  tufe_endeks: {
+    kod: 'TP.TUKFIY2025.GENEL',
+    aciklama: 'TÜFE genel endeks düzeyi (2025=100)',
+    birim: 'endeks',
+  },
+  ufe_yillik: {
+    kod: 'TP.TUFE1YI.T1',
+    aciklama: 'Yurt içi üretici fiyat endeksi (Yİ-ÜFE) yıllık değişim (%)',
+    birim: '%',
+    formul: 3,
+  },
+  politika_faizi: {
+    kod: 'TP.BISPOLFAIZ.TUR',
+    aciklama:
+      "TCMB politika faizi (%), BIS'in aylık merkez bankası politika faizi tablosundaki Türkiye satırı — ay sonu değeri, ay içi değişiklikleri bir sonraki ayda görünür",
+    birim: '%',
+  },
+  dolar: {
+    kod: 'TP.DK.USD.S.YTL',
+    aciklama: 'USD/TRY, TCMB döviz satış kuru (günlük)',
+    birim: 'TL',
+  },
+  euro: {
+    kod: 'TP.DK.EUR.S.YTL',
+    aciklama: 'EUR/TRY, TCMB döviz satış kuru (günlük)',
+    birim: 'TL',
+  },
+  sterlin: {
+    kod: 'TP.DK.GBP.S.YTL',
+    aciklama: 'GBP/TRY, TCMB döviz satış kuru (günlük)',
+    birim: 'TL',
+  },
+  konut_fiyat_endeksi: {
+    kod: 'TP.KFE.TR',
+    aciklama: 'Konut Fiyat Endeksi (KFE), Türkiye geneli, aylık',
+    birim: 'endeks',
+  },
+  konut_fiyat_yillik: {
+    kod: 'TP.KFE.TR',
+    aciklama: 'Konut Fiyat Endeksi yıllık değişim (%), Türkiye geneli',
+    birim: '%',
+    formul: 3,
+  },
+  reel_efektif_kur: {
+    kod: 'TP.RK.T1.Y',
+    aciklama:
+      "TÜFE bazlı reel efektif döviz kuru (2025=100), aylık; yükselişi TL'nin reel değerlenmesi",
+    birim: 'endeks',
+  },
+} as const satisfies Record<string, Gosterge>;
+
+export type GostergeAdi = keyof typeof GOSTERGELER;
+
+/** Default window for an indicator: long enough for a monthly series to show a year, short enough to stay under EVDS's 150-observation cap for daily FX. */
+const VARSAYILAN_ARALIK_MS = 400 * 24 * 60 * 60 * 1000;
+
+/** The `series=…` path for one indicator; the formula is only sent when the table names one. */
+function gostergeYolu(g: Gosterge, baslangic: string, bitis: string): string {
+  return [
+    `series=${g.kod}`,
+    `startDate=${evdsTarih(baslangic)}`,
+    `endDate=${evdsTarih(bitis)}`,
+    'type=json',
+    ...(g.formul === undefined ? [] : [`formulas=${g.formul}`]),
+  ].join('&');
+}
+
 export const evdsKaynagi: Kaynak = {
   id: KAYNAK_ID,
   ad: 'TCMB Elektronik Veri Dağıtım Sistemi (EVDS)',
@@ -332,6 +426,76 @@ export const evdsKaynagi: Kaynak = {
                 toplam,
                 sinir: GOZLEM_SINIRI,
                 gozlemler,
+              },
+              `${BASE}/${yol}`,
+            ),
+          );
+        } catch (error) {
+          return hata(
+            error instanceof KaynakHatasi
+              ? error
+              : new KaynakHatasi(
+                  KAYNAK_ID,
+                  `${BASE}/${yol}`,
+                  error instanceof Error ? error.message : String(error),
+                ),
+          );
+        }
+      },
+    );
+
+    server.registerTool(
+      'evds_gosterge',
+      {
+        title: 'EVDS başlıca göstergeler (kod bilmeden)',
+        description: `Türkiye'nin başlıca ekonomik göstergeleri, seri kodu bilmeden, adıyla: ${Object.keys(GOSTERGELER).join(', ')}. Headline Turkish economic indicators by name (inflation, PPI, policy rate, FX, housing index, real effective exchange rate) from the central bank's EVDS. Yanıtta son değer ve tarih, seri kodu ve uygulanan formül vardır. Varsayılan aralık: son 400 gün (EVDS bitişten geriye en fazla ${GOZLEM_SINIRI} gözlem verir). EVDS_API_KEY gerektirir.`,
+        inputSchema: {
+          gosterge: z
+            .enum(Object.keys(GOSTERGELER) as [GostergeAdi, ...GostergeAdi[]])
+            .describe('Gösterge adı'),
+          baslangic: tarihSemasi.optional().describe('YYYY-AA-GG, varsayılan 400 gün önce'),
+          bitis: tarihSemasi.optional().describe('YYYY-AA-GG, varsayılan bugün'),
+        },
+        outputSchema: zarfSemasi(
+          z.object({
+            gosterge: z.string(),
+            aciklama: z.string(),
+            seriKodu: z.string(),
+            formul: z.string(),
+            birim: z.string(),
+            aralik: z.object({ baslangic: z.string(), bitis: z.string() }),
+            son: z.object({ tarih: z.string(), deger: z.number().nullable() }).nullable(),
+            gozlemler: z.array(z.object({ tarih: z.string(), deger: z.number().nullable() })),
+          }),
+        ),
+        annotations: { readOnlyHint: true, openWorldHint: true },
+      },
+      async ({ gosterge, baslangic, bitis }) => {
+        const g: Gosterge = GOSTERGELER[gosterge];
+        const simdi = new Date();
+        const bitisGun = bitis ?? isoGun(simdi);
+        const baslangicGun = baslangic ?? isoGun(new Date(simdi.getTime() - VARSAYILAN_ARALIK_MS));
+        const yol = gostergeYolu(g, baslangicGun, bitisGun);
+        try {
+          const { gozlemler } = gozlemleriDonustur(
+            await evds(yol, 10 * 60 * 1000),
+            [g.kod],
+            g.formul,
+          );
+          const duz = gozlemler.map((o) => ({ tarih: o.tarih, deger: o.degerler[g.kod] ?? null }));
+          const son = [...duz].reverse().find((o) => o.deger !== null) ?? null;
+          return cevapla(
+            zarfla(
+              evdsKaynagi,
+              {
+                gosterge,
+                aciklama: g.aciklama,
+                seriKodu: g.kod,
+                formul: FORMULLER[(g.formul ?? 0) as keyof typeof FORMULLER],
+                birim: g.birim,
+                aralik: { baslangic: baslangicGun, bitis: bitisGun },
+                son,
+                gozlemler: duz,
               },
               `${BASE}/${yol}`,
             ),

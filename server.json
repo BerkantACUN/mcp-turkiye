@@ -8,13 +8,13 @@
     "source": "github"
   },
   "websiteUrl": "https://github.com/BerkantACUN/mcp-turkiye#readme",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-turkiye",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

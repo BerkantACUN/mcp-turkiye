@@ -5,7 +5,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { onbellegiTemizle } from '../../src/core/http.js';
 import { sunucuOlustur } from '../../src/server.js';
-import { ANAHTAR_DEGISKENI, anahtar } from '../../src/sources/evds/index.js';
+import { ANAHTAR_DEGISKENI, anahtar, GOSTERGELER } from '../../src/sources/evds/index.js';
 import {
   gozlemleriDonustur,
   kategorileriDonustur,
@@ -21,6 +21,7 @@ const gruplar = oku('evds-datagroups-2501.json');
 const seriler = oku('evds-serielist-tukfiy2025.json');
 const cpi = oku('evds-series-cpi.json');
 const kurlar = oku('evds-series-usd-eur.json');
+const dolar = oku('evds-series-usd-only.json');
 
 describe('evds parse', () => {
   it('reads the category tree with parents (−1 becomes null)', () => {
@@ -113,6 +114,7 @@ describe('evds tools through the server', () => {
           return new Response(JSON.stringify(cpi));
         if (url.includes('series=TP.DK.USD.S.YTL-TP.DK.EUR.S.YTL'))
           return new Response(JSON.stringify(kurlar));
+        if (url.includes('series=TP.DK.USD.S.YTL&')) return new Response(JSON.stringify(dolar));
         return new Response('', { status: 500 });
       }),
     );
@@ -201,5 +203,49 @@ describe('evds tools through the server', () => {
     expect((r.structuredContent.veri.seriler as Array<{ kod: string }>).map((s) => s.kod)).toEqual([
       'TP.TUKFIY2025.GENEL',
     ]);
+  });
+
+  it('resolves a named indicator to its series code and formula, and reports the latest value', async () => {
+    vi.stubEnv(ANAHTAR_DEGISKENI, 'k');
+    await baglan();
+    const r = await cagir('evds_gosterge', {
+      gosterge: 'enflasyon_yillik',
+      baslangic: '2026-01-01',
+      bitis: '2026-09-16',
+    });
+    expect(r.isError).toBeFalsy();
+    expect(r.structuredContent.veri.seriKodu).toBe('TP.TUKFIY2025.GENEL');
+    expect(r.structuredContent.veri.formul).toBe('yıllık yüzde değişim');
+    expect(r.structuredContent.veri.birim).toBe('%');
+    expect(r.structuredContent.veri.son).toEqual({ tarih: '2026-8', deger: 31.50734282 });
+    expect(r.structuredContent.kaynak.url).toContain('formulas=3');
+    expect((r.structuredContent.veri.gozlemler as unknown[]).length).toBe(8);
+  });
+
+  it('skips trailing nulls when picking the latest value and omits formulas for level series', async () => {
+    vi.stubEnv(ANAHTAR_DEGISKENI, 'k');
+    await baglan();
+    const r = await cagir('evds_gosterge', { gosterge: 'dolar' });
+    expect(r.isError).toBeFalsy();
+    expect(r.structuredContent.veri.formul).toBe('düzey');
+    expect(r.structuredContent.kaynak.url).not.toContain('formulas=');
+    expect(r.structuredContent.veri.son).toEqual({ tarih: '16-09-2026', deger: 48.646 });
+    const aralik = r.structuredContent.veri.aralik as { baslangic: string; bitis: string };
+    expect(aralik.bitis).toBe(new Date().toISOString().slice(0, 10));
+  });
+
+  it('rejects an unknown indicator name at the schema, before any request', async () => {
+    vi.stubEnv(ANAHTAR_DEGISKENI, 'k');
+    await baglan();
+    const r = await cagir('evds_gosterge', { gosterge: 'bitcoin' });
+    expect(r.isError).toBe(true);
+    expect(gonderilenAnahtarlar).toEqual([]);
+  });
+
+  it('lists every indicator in the tool description so a model can pick one', async () => {
+    await baglan();
+    const { tools } = await client.listTools();
+    const aciklama = tools.find((t) => t.name === 'evds_gosterge')?.description ?? '';
+    for (const ad of Object.keys(GOSTERGELER)) expect(aciklama).toContain(ad);
   });
 });
