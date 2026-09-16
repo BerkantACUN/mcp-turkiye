@@ -12,6 +12,8 @@ import {
   hadiseAdi,
   merkezleriDonustur,
   sonDurumuDonustur,
+  uyariNumaralari,
+  uyariyiDonustur,
 } from '../../src/sources/mgm/parse.js';
 
 const fixtures = join(__dirname, '..', 'fixtures');
@@ -19,6 +21,9 @@ const oku = (f: string) => readFileSync(join(fixtures, f), 'utf8');
 const merkezler = JSON.parse(oku('mgm-merkezler-ankara.json'));
 const sonDurum = JSON.parse(oku('mgm-sondurum-ankara.json'));
 const gunluk = JSON.parse(oku('mgm-gunluk-ankara.json'));
+const alarmlar = JSON.parse(oku('mgm-alarmlar.json'));
+const alarm460 = JSON.parse(oku('mgm-alarm-26010460.json'));
+const alarm459 = JSON.parse(oku('mgm-alarm-26010459.json'));
 
 describe('mgm parse', () => {
   it('reads the centre MGM serves a province from', () => {
@@ -71,6 +76,32 @@ describe('mgm parse', () => {
     expect(Object.keys(HADISE).length).toBeGreaterThan(25);
   });
 
+  it('reads the serial numbers off the warning list and nothing else', () => {
+    expect(uyariNumaralari(alarmlar)).toEqual(['26010460', '26010459']);
+    expect(uyariNumaralari({ error: 'x' })).toEqual([]);
+    expect(uyariNumaralari([{ seriNo: 1 }, {}, null, { seriNo: 'a' }])).toEqual(['a']);
+  });
+
+  it('turns a warning detail into the fields a person asks about, with the site link', () => {
+    const u = uyariyiDonustur(alarm460);
+    expect(u).toMatchObject({
+      seriNo: '26010460',
+      tur: 'Meteorolojik Uyarı',
+      hadise: 'Gökgürültülü Sağanak Yağış',
+      siddet: 'Kuvvetli Yağış',
+      riskler: 'Sel - Su Baskını - Yıldırım - Ulaşımda Aksamalar',
+      yayin: '2026-09-16T10:49:00.000Z',
+      bitis: '2026-09-17T18:00:00.000Z',
+      hadiseZamani: '17.09.2026 11:00-17.09.2026 21:00',
+      url: 'https://www.mgm.gov.tr/tahmin/uyari-goster.aspx?sN=26010460y',
+    });
+    expect(u?.baslik).toMatch(/^Ankara, Eskişehir'in Doğusu/);
+    expect(u?.metin).toMatch(/^Yapılan son değerlendirmelere göre/);
+    expect(uyariyiDonustur({ ...alarm460, ihbarTipi: 2 })?.url).toMatch(/26010460e$/);
+    expect(uyariyiDonustur({ seriNo: '1' })).toBeNull();
+    expect(uyariyiDonustur('nope')).toBeNull();
+  });
+
   it('builds the centre lookup URL with an optional district', () => {
     expect(merkezUrl('Ankara')).toBe('https://servis.mgm.gov.tr/web/merkezler?il=Ankara');
     expect(merkezUrl('İstanbul', 'Kadıköy')).toContain('ilce=Kad%C4%B1k%C3%B6y');
@@ -95,6 +126,11 @@ describe('mgm_hava_durumu through the server', () => {
           return new Response(JSON.stringify(sonDurum));
         if (url.includes('/tahminler/gunluk?istno=90601'))
           return new Response(JSON.stringify(gunluk));
+        if (url.endsWith('/alarmlar')) return new Response(JSON.stringify(alarmlar));
+        if (url.endsWith('/alarmlar/detay?alarmno=26010460'))
+          return new Response(JSON.stringify(alarm460));
+        if (url.endsWith('/alarmlar/detay?alarmno=26010459'))
+          return new Response(JSON.stringify(alarm459));
         return new Response('', { status: 500 });
       }),
     );
@@ -136,5 +172,35 @@ describe('mgm_hava_durumu through the server', () => {
     };
     expect(r.isError).toBe(true);
     expect(r.content[0]?.text).toMatch(/merkez bulamadı/);
+  });
+
+  it('lists every active warning with its full text, citing the warnings page', async () => {
+    const r = (await client.callTool({ name: 'mgm_uyarilar', arguments: {} })) as unknown as {
+      isError?: boolean;
+      structuredContent: {
+        kaynak: { url: string };
+        veri: { toplam: number; filtre: string | null; uyarilar: Array<{ seriNo: string }> };
+      };
+    };
+    expect(r.isError).toBeFalsy();
+    expect(r.structuredContent.veri.toplam).toBe(2);
+    expect(r.structuredContent.veri.filtre).toBeNull();
+    expect(r.structuredContent.veri.uyarilar.map((u) => u.seriNo)).toEqual([
+      '26010460',
+      '26010459',
+    ]);
+    expect(r.structuredContent.kaynak.url).toBe('https://www.mgm.gov.tr/tahmin/uyarilar.aspx');
+  });
+
+  it('filters warnings by a place name in the title or text, Turkish case-insensitively', async () => {
+    const sor = async (il: string) =>
+      (
+        (await client.callTool({ name: 'mgm_uyarilar', arguments: { il } })) as unknown as {
+          structuredContent: { veri: { toplam: number; uyarilar: Array<{ seriNo: string }> } };
+        }
+      ).structuredContent.veri;
+    expect((await sor('ÇANKIRI')).uyarilar.map((u) => u.seriNo)).toEqual(['26010460']);
+    expect((await sor('ege')).uyarilar.map((u) => u.seriNo)).toEqual(['26010459']);
+    expect((await sor('Van')).toplam).toBe(0);
   });
 });

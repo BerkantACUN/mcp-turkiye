@@ -10,6 +10,7 @@
  * every other line belongs to the item that is open. That shape has held
  * for years; the parser refuses a page it cannot find a date on.
  */
+import { varliklariCoz } from '../../core/metin.js';
 
 export interface GazeteMaddesi {
   readonly baslik: string;
@@ -52,21 +53,6 @@ const AYLAR: Readonly<Record<string, string>> = {
   kasım: '11',
   aralık: '12',
 };
-
-const ENTITIES: Readonly<Record<string, string>> = {
-  '&nbsp;': ' ',
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'",
-};
-
-function metneCevir(html: string): string {
-  return html
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&[a-z]+;|&#39;/g, (e) => ENTITIES[e] ?? e);
-}
 
 /** Upper-case Turkish, with room for the punctuation section titles use. */
 const BASLIK_SATIRI = /^[A-ZÇĞİÖŞÜÂÎÛ0-9 .,:;/'’()–-]+$/;
@@ -132,7 +118,7 @@ export function fihristiAyristir(html: string, tarih: string): GazeteFihristi {
     .replace(/<a\s[^>]*href="([^"]+)"[^>]*>/gi, '\n@@$1@@ ')
     .replace(/<[^>]+>/g, '\n');
   const satirlar = baslikSatirlariniBirlestir(
-    metneCevir(isaretli)
+    varliklariCoz(isaretli)
       .split('\n')
       .map((l) => l.replace(/\s+/g, ' ').trim())
       .filter((l) => l.length > 0),
@@ -214,7 +200,7 @@ export function maddeMetniniCikar(html: string): string {
   const govde = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] ?? html;
   // Word-exported HTML wraps text with hard newlines mid-sentence; only
   // block boundaries are real line breaks.
-  const metin = metneCevir(
+  const metin = varliklariCoz(
     govde
       .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, '')
       .replace(/\r?\n/g, ' ')

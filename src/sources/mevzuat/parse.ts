@@ -7,6 +7,7 @@
  * `EK MADDE` and `GEÇİCİ MADDE` for additional and transitional ones, and
  * the line before an article is its short heading.
  */
+import { varliklariCoz } from '../../core/metin.js';
 
 export interface MevzuatOzeti {
   /** `<tur>.<tertip>.<no>` — the three numbers every mevzuat.gov.tr URL needs. */
@@ -32,22 +33,6 @@ export interface MevzuatMetni {
   readonly baslik: string;
   readonly satirlar: readonly string[];
   readonly metin: string;
-}
-
-const ENTITIES: Readonly<Record<string, string>> = {
-  '&nbsp;': ' ',
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&apos;': "'",
-};
-
-function metneCevir(html: string): string {
-  return html
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(Number.parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&[a-z]+;/gi, (e) => ENTITIES[e.toLowerCase()] ?? e);
 }
 
 const kisalt = (s: string): string =>
@@ -110,7 +95,7 @@ export function metniAyristir(html: string): MevzuatMetni {
   // The page is a Word export: the source wraps text at ~80 columns with
   // hard newlines ("Madde\n1 -"), so those are collapsed first and only
   // block boundaries become lines.
-  const duz = metneCevir(
+  const duz = varliklariCoz(
     govde
       .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, '')
       .replace(/\r?\n/g, ' ')

@@ -7,6 +7,9 @@ import {
   type Merkez,
   merkezleriDonustur,
   sonDurumuDonustur,
+  type Uyari,
+  uyariNumaralari,
+  uyariyiDonustur,
 } from './parse.js';
 
 const KAYNAK_ID = 'mgm';
@@ -70,6 +73,37 @@ const gunlukSemasi = z.object({
   nemAralik: z.tuple([z.number().nullable(), z.number().nullable()]),
 });
 
+const uyariSemasi = z.object({
+  seriNo: z.string(),
+  tur: z.string(),
+  baslik: z.string(),
+  hadise: z.string().nullable(),
+  siddet: z.string().nullable(),
+  riskler: z.string().nullable(),
+  yayin: z.string().nullable(),
+  bitis: z.string().nullable(),
+  hadiseZamani: z.string().nullable(),
+  metin: z.string(),
+  url: z.string(),
+});
+
+/** Active warnings: the list names them, the detail endpoint describes each; both cached briefly. */
+export async function uyarilariGetir(): Promise<Uyari[]> {
+  const liste = await jsonGetir(`${SERVIS}/alarmlar`, { ...istek, cacheMs: 5 * 60 * 1000 });
+  const detaylar = await Promise.all(
+    uyariNumaralari(liste).map((no) =>
+      jsonGetir(`${SERVIS}/alarmlar/detay?alarmno=${encodeURIComponent(no)}`, {
+        ...istek,
+        cacheMs: 30 * 60 * 1000,
+      }),
+    ),
+  );
+  return detaylar.map(uyariyiDonustur).filter((u): u is Uyari => u !== null);
+}
+
+const uyariEslesir = (u: Uyari, arama: string): boolean =>
+  `${u.baslik} ${u.metin}`.toLocaleLowerCase('tr-TR').includes(arama);
+
 export const mgm: Kaynak = {
   id: KAYNAK_ID,
   ad: 'Meteoroloji Genel Müdürlüğü',
@@ -127,6 +161,46 @@ export const mgm: Kaynak = {
                 tahmin: gunlukTahminiDonustur(tahminHam),
               },
               `https://www.mgm.gov.tr/tahmin/il-ve-ilceler.aspx?il=${encodeURIComponent(merkez.il)}&ilce=${encodeURIComponent(merkez.ilce)}`,
+            ),
+          );
+        } catch (error) {
+          return hata(error);
+        }
+      },
+    );
+
+    server.registerTool(
+      'mgm_uyarilar',
+      {
+        title: 'MGM meteorolojik uyarılar (yürürlükteki)',
+        description:
+          "Meteoroloji Genel Müdürlüğü'nün şu an yürürlükteki meteorolojik uyarıları: kuvvetli yağış, fırtına, kar, don, sıcak hava dalgası gibi; her biri için hadise, şiddet, riskler, geçerlilik ve uyarının tam metni. Active severe-weather warnings issued by the state meteorological service, with the full notice text. `il` verilirse yalnızca başlığında ya da metninde o adı geçen uyarılar; uyarı yoksa boş liste (bu da bir bilgidir).",
+        inputSchema: {
+          il: z
+            .string()
+            .min(2)
+            .optional()
+            .describe('İl ya da bölge adı; uyarı metninde aranır, örn. Ankara, Ege (isteğe bağlı)'),
+        },
+        outputSchema: zarfSemasi(
+          z.object({
+            toplam: z.number(),
+            filtre: z.string().nullable(),
+            uyarilar: z.array(uyariSemasi),
+          }),
+        ),
+        annotations: { readOnlyHint: true, openWorldHint: true },
+      },
+      async ({ il }) => {
+        try {
+          const hepsi = await uyarilariGetir();
+          const arama = il?.trim().toLocaleLowerCase('tr-TR') || null;
+          const uyarilar = arama ? hepsi.filter((u) => uyariEslesir(u, arama)) : hepsi;
+          return cevapla(
+            zarfla(
+              mgm,
+              { toplam: uyarilar.length, filtre: il?.trim() ?? null, uyarilar },
+              'https://www.mgm.gov.tr/tahmin/uyarilar.aspx',
             ),
           );
         } catch (error) {

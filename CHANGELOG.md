@@ -4,6 +4,21 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-09-17
+
+İki yeni kurum, bir yeni MGM aracı: on beş kaynak, otuz araç.
+
+### Added
+
+- **kandilli:** `kandilli_depremler` — Kandilli Rasathanesi'nin (BDTİM) son 500 depremi; AFAD'dan bağımsız ikinci katalog. MD/ML/Mw ayrı ayrı, manşet büyüklük ML → Mw → MD; ilksel/revize bilgisi ve sayfanın yenileme zamanı. Veri kaynak gösterilerek kullanılabilir, ticari kullanım Boğaziçi Üniversitesi'nin iznine tabidir (SOURCES.md).
+- **mgm:** `mgm_uyarilar` — yürürlükteki meteorolojik uyarılar: hadise, şiddet, riskler, geçerlilik ve uyarının tam metni; `il` ile süzme. `gunun_ozeti` prompt'u artık uyarıları da sorar.
+- **osym:** `osym_sinav_takvimi` — ÖSYM'nin yıllık sınav takvimi (YKS, KPSS, ALES, YDS, DGS, TUS…): başvuru, geç başvuru, sınav, sonuç ve tercih tarihleri; varsayılan yalnızca gelecekteki adımlar, `ara` ile sınav filtresi.
+- Çekirdek: `src/core/metin.ts` — tek HTML varlık çözücü; Resmî Gazete ve mevzuat ayrıştırıcıları da artık onu kullanır. HTTP katmanına `deneme` (toplam deneme sayısı) seçeneği; varsayılan değişmedi (2).
+
+### Changed
+
+- User-agent artık `mcp-turkiye/<sürüm> (github.com/BerkantACUN/mcp-turkiye)` — şemasız. ÖSYM'nin önündeki WAF, `+https://github.com/…` taşıyan user-agent'ı akıtarak yanıtlıyordu; şemasız hâli geçiyor.
+
 ## [0.6.0] — 2026-09-17
 
 Kod bilmeden ekonomi: yirmi yedi araç.

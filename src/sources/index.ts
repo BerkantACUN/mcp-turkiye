@@ -5,9 +5,11 @@ import { bist } from './bist/index.js';
 import { dogrulama } from './dogrulama/index.js';
 import { evdsKaynagi } from './evds/index.js';
 import { ibb } from './ibb/index.js';
+import { kandilli } from './kandilli/index.js';
 import { mevzuat } from './mevzuat/index.js';
 import { mgm } from './mgm/index.js';
 import { opet } from './opet/index.js';
+import { osym } from './osym/index.js';
 import { parametreler } from './parametreler/index.js';
 import { resmigazete } from './resmigazete/index.js';
 import { tatil } from './tatil/index.js';
@@ -23,6 +25,7 @@ export const KAYNAKLAR: readonly Kaynak[] = [
   evdsKaynagi,
   bist,
   afad,
+  kandilli,
   mgm,
   opet,
   ibb,
@@ -30,6 +33,7 @@ export const KAYNAKLAR: readonly Kaynak[] = [
   resmigazete,
   mevzuat,
   tatil,
+  osym,
   parametreler,
   dogrulama,
 ];

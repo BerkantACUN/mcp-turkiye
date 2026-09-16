@@ -32,7 +32,7 @@ export function promptlariKaydet(server: McpServer): void {
                 `Bugünün Türkiye özetini çıkar. Şu araçları çağır ve sonuçları kısa başlıklar altında topla:`,
                 `1. tcmb_kur ile USD ve EUR (bülten tarihini yaz).`,
                 `2. afad_depremler ile son 24 saatte büyüklüğü 4 ve üzeri depremler (yoksa "yok" de).`,
-                `3. mgm_hava_durumu ile ${sehir} için anlık durum ve yarının tahmini.`,
+                `3. mgm_hava_durumu ile ${sehir} için anlık durum ve yarının tahmini; mgm_uyarilar ile yürürlükte meteorolojik uyarı varsa (il=${sehir}) tek satırda.`,
                 ilPlaka(sehir) === 34
                   ? `4. ibb_trafik_indeksi ile İstanbul trafik yoğunluğu.`
                   : `4. (Trafik indeksi yalnızca İstanbul için var; ${sehir} için atla.)`,

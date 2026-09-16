@@ -153,3 +153,59 @@ export function gunlukTahminiDonustur(ham: unknown): GunlukTahmin[] {
   }
   return gunler;
 }
+
+/** One active warning, as `/web/alarmlar/detay?alarmno=` describes it. */
+export interface Uyari {
+  readonly seriNo: string;
+  /** "Meteorolojik Uyarı", "Erken Uyarı"… — MGM's own label for the notice type. */
+  readonly tur: string;
+  readonly baslik: string;
+  readonly hadise: string | null;
+  readonly siddet: string | null;
+  readonly riskler: string | null;
+  /** When the notice was issued and when it lapses (ISO, as MGM sends them). */
+  readonly yayin: string | null;
+  readonly bitis: string | null;
+  /** The window the weather itself is expected in, MGM's wording ("17.09.2026 11:00-17.09.2026 21:00"). */
+  readonly hadiseZamani: string | null;
+  /** The full text of the notice: where, when, what to watch for. */
+  readonly metin: string;
+  readonly url: string;
+}
+
+const metin = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null);
+
+/**
+ * Pure. The list endpoint gives only serial numbers; everything else comes
+ * from the detail. A non-list is read as "no warnings", as the site does.
+ */
+export function uyariNumaralari(ham: unknown): string[] {
+  if (!Array.isArray(ham)) return [];
+  return ham
+    .map((u) => (u && typeof u === 'object' ? (u as { seriNo?: unknown }).seriNo : undefined))
+    .filter((s): s is string => typeof s === 'string' && s !== '');
+}
+
+/** Pure. A detail record → the warning; null when the record has no title (nothing to show). */
+export function uyariyiDonustur(ham: unknown): Uyari | null {
+  if (!ham || typeof ham !== 'object') return null;
+  const r = ham as Record<string, unknown>;
+  const seriNo = metin(r.seriNo);
+  const baslik = metin(r.baslik);
+  if (!seriNo || !baslik) return null;
+  // The site links "early warning" types (2, 5, 7) to a different page than plain notices.
+  const erken = [2, 5, 7].includes(Number(r.ihbarTipi));
+  return {
+    seriNo,
+    tur: metin(r.ihbarText) ?? 'Meteorolojik Uyarı',
+    baslik,
+    hadise: metin(r.hadiseCinsi),
+    siddet: metin(r.hadiseSiddeti),
+    riskler: metin(r.riskler),
+    yayin: metin(r.baslangic),
+    bitis: metin(r.bitis),
+    hadiseZamani: metin(r.hadiseZaman),
+    metin: metin(r.hadiseYer) ?? baslik,
+    url: `https://www.mgm.gov.tr/tahmin/uyari-goster.aspx?sN=${seriNo}${erken ? 'e' : 'y'}`,
+  };
+}

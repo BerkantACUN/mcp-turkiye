@@ -47,13 +47,24 @@ export interface IstekSecenekleri {
   readonly ekSertifikalar?: readonly string[];
   /** POST with this body (already serialised); GET otherwise. */
   readonly govde?: string;
+  /**
+   * Attempts in total (default 2: one retry on 5xx, timeout or network
+   * error, never on 4xx). Raise it only for a host known to stall at random.
+   */
+  readonly deneme?: number;
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000;
+const VARSAYILAN_DENEME = 2;
 const DEFAULT_CACHE_MS = 60_000;
 /** The runtime's own fetch, captured at load so a stubbed one can be told apart. */
 const YERLI_FETCH = fetch;
-const USER_AGENT = `mcp-turkiye/${SURUM} (+https://github.com/BerkantACUN/mcp-turkiye)`;
+/**
+ * Names the project and where to find it, without a URL scheme: at least
+ * one government WAF (ÖSYM's) throttles a user-agent carrying
+ * `+https://github.com/…` to a trickle while `github.com/…` passes.
+ */
+const USER_AGENT = `mcp-turkiye/${SURUM} (github.com/BerkantACUN/mcp-turkiye)`;
 
 interface OnbellekKaydi {
   readonly body: string;
@@ -78,7 +89,7 @@ export async function metinGetir(url: string, secenek: IstekSecenekleri): Promis
     return cached.body;
   }
 
-  const body = await getirDene(url, secenek, 2);
+  const body = await getirDene(url, secenek, secenek.deneme ?? VARSAYILAN_DENEME);
   if (cacheMs > 0) {
     onbellek.set(anahtar, { body, expiresAt: Date.now() + cacheMs });
   }

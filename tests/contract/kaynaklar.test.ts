@@ -235,3 +235,49 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: mevzuat.gov.tr', () => {
     expect(m?.metin.startsWith('MADDE 6-')).toBe(true);
   }, 60_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Kandilli, MGM uyarılar, ÖSYM', () => {
+  it('Kandilli: the list page still parses as 500 fixed-width lines with a refresh time', async () => {
+    const { listeyiAyristir } = await import('../../src/sources/kandilli/parse.js');
+    const { metinGetir } = await import('../../src/core/http.js');
+    onbellegiTemizle();
+    const html = await metinGetir('http://www.koeri.boun.edu.tr/scripts/lst0.asp', {
+      kaynakId: 'kandilli',
+      charset: 'windows-1254',
+      cacheMs: 0,
+    });
+    const { depremler, guncelleme } = listeyiAyristir(html);
+    expect(depremler.length).toBeGreaterThan(400);
+    expect(guncelleme).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/);
+    expect(depremler[0]?.buyukluk).toBeGreaterThan(0);
+    expect(depremler[0]?.yer).not.toBe('');
+  }, 30_000);
+
+  it('MGM: the warning list is an array and each entry has a readable detail', async () => {
+    const { uyarilariGetir } = await import('../../src/sources/mgm/index.js');
+    onbellegiTemizle();
+    const uyarilar = await uyarilariGetir();
+    expect(Array.isArray(uyarilar)).toBe(true);
+    for (const u of uyarilar) {
+      expect(u.baslik.length).toBeGreaterThan(5);
+      expect(u.metin.length).toBeGreaterThan(20);
+      expect(u.url).toMatch(/uyari-goster\.aspx\?sN=\d+[ey]$/);
+    }
+  }, 30_000);
+
+  it('ÖSYM: the calendar table still yields YKS with an exam date', async () => {
+    const { takvimiAyristir } = await import('../../src/sources/osym/parse.js');
+    const { metinGetir } = await import('../../src/core/http.js');
+    onbellegiTemizle();
+    const html = await metinGetir('https://www.osym.gov.tr/Sayfa/SinavTakvimi', {
+      kaynakId: 'osym',
+      cacheMs: 0,
+      timeoutMs: 8_000,
+      deneme: 3,
+    });
+    const sinavlar = takvimiAyristir(html);
+    expect(sinavlar.length).toBeGreaterThan(30);
+    const yks = sinavlar.find((s) => s.grup === 'YKS' && s.sinav !== null);
+    expect(yks?.sinav?.baslangic).toMatch(/^\d{4}-\d{2}-\d{2}/);
+  }, 30_000);
+});

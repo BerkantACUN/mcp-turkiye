@@ -33,12 +33,19 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Katalog kamuya açıktır; kaynak belirtilerek kullanılır. Değerler AFAD'ın ilk çözümleridir ve sonradan güncellenebilir — `alindi` zamanı bu yüzden yanıttadır.
 - **Davranış:** Sorgular 60 saniye önbellekte. Sonuç istemci tarafında `limit` ile kırpılır; varsayılan 50.
 
+## kandilli — Boğaziçi Üniversitesi Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü (BDTİM)
+
+- **Veri:** Son 500 deprem (Türkiye ve yakın çevresi): zaman, enlem/boylam, derinlik, MD/ML/Mw büyüklükleri, yer adı, çözümün ilksel mi revize mi olduğu. AFAD'dan bağımsız ikinci katalog; büyük bir depremden sonra AFAD servisi yoğunken de yanıt verir.
+- **Uç nokta:** `http://www.koeri.boun.edu.tr/scripts/lst0.asp` — sabit genişlikli metin (`<pre>`), windows-1254. Sunucu 443'te yanıt vermediği için düz HTTP; sayfada kişisel ya da gizli hiçbir şey yoktur.
+- **Şart:** Sayfanın kendi ifadesiyle: veri "Boğaziçi Üniversitesi Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü Bölgesel Deprem-Tsunami İzleme ve Değerlendirme Merkezi kaynak gösterilerek kullanılabilir"; **ticari amaçlı kullanım Boğaziçi Üniversitesi Rektörlüğü'nün yazılı izni ve onayına tabidir.** Her yanıt kurumu adıyla taşır; ticari bir üründe kullanacaksanız izin sizin sorumluluğunuzdadır.
+- **Davranış:** 2 dakika önbellek (sayfa birkaç dakikada bir yenilenir; yenileme zamanı yanıttadır). Zamanlar Türkiye saatidir; `sonSaat` filtresi buna göre hesaplanır. Manşet büyüklük ML, yoksa Mw, yoksa MD — sayfanın kendi tercihi; üç sütun da yanıttadır.
+
 ## mgm — Meteoroloji Genel Müdürlüğü
 
-- **Veri:** Anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, görüş, yağış, hadise) ve 5 günlük tahmin; il/ilçe → istasyon eşlemesi.
-- **Uç nokta:** `https://servis.mgm.gov.tr/web/merkezler`, `/web/sondurumlar`, `/web/tahminler/gunluk` — MGM'nin kendi sitesinin kullandığı servis. Servis yalnızca `Origin: https://www.mgm.gov.tr` başlığıyla yanıt verir; sunucu bu başlığı, tarayıcının gönderdiği gibi gönderir.
+- **Veri:** Anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, görüş, yağış, hadise) ve 5 günlük tahmin; il/ilçe → istasyon eşlemesi. Yürürlükteki meteorolojik uyarılar (hadise, şiddet, riskler, geçerlilik, tam metin).
+- **Uç nokta:** `https://servis.mgm.gov.tr/web/merkezler`, `/web/sondurumlar`, `/web/tahminler/gunluk`, `/web/alarmlar` ve `/web/alarmlar/detay?alarmno=` — MGM'nin kendi sitesinin kullandığı servis. Servis yalnızca `Origin: https://www.mgm.gov.tr` başlığıyla yanıt verir; sunucu bu başlığı, tarayıcının gönderdiği gibi gönderir.
 - **Şart:** MGM verisi kamuya açıktır ve MGM'ye atıfla kullanılır; sitede "link vermek için" yönergesi bulunur. Resmî bir API sözleşmesi yoktur — biçim değişirse haftalık sözleşme testi yakalar.
-- **Davranış:** İstasyon eşlemesi 24 saat, anlık gözlem 10 dakika, tahmin 30 dakika önbellekte. `-9999` (ölçüm yok) değerleri null'a çevrilir; hadise kodları MGM'nin kendi site betiğindeki tabloyla Türkçe'ye açılır.
+- **Davranış:** İstasyon eşlemesi 24 saat, anlık gözlem 10 dakika, tahmin 30 dakika, uyarı listesi 5 dakika ve uyarı metinleri 30 dakika önbellekte. Uyarı yoksa boş liste döner (hata değil). `-9999` (ölçüm yok) değerleri null'a çevrilir; hadise kodları MGM'nin kendi site betiğindeki tabloyla Türkçe'ye açılır.
 
 ## opet — Opet akaryakıt pompa fiyatları
 
@@ -82,6 +89,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Veri:** Ulusal bayramlar (2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun) ve dinî bayramlar (Diyanet İşleri Başkanlığı "Dini Günler" takvimi, `vakithesaplama.diyanet.gov.tr`).
 - **Şart:** Kanun metni ve Diyanet takvimi kamuya açıktır.
 - **Davranış:** Tarihler pakete gömülüdür, ağ erişimi yoktur. Dinî bayram tablosu yalnızca doğrulanmış yıllar için vardır (şu an 2026, 2027); tablo olmayan yıl için dinî bayramlar **tahmin edilmez**, yanıtta `diniBayramlarDahil=false` döner. Yeni yıl tablosu Diyanet yayımladığında eklenir.
+
+## osym — Ölçme, Seçme ve Yerleştirme Merkezi (sınav takvimi)
+
+- **Veri:** Yılın sınav takvimi: her sınav oturumu için ön başvuru, başvuru, geç başvuru, sınav, sonuç ve tercih tarihleri ile ÖSYM'nin açıklama notu (YKS, KPSS, ALES, YDS, DGS, TUS, MSÜ, e-YDS…; 2026'da 86 satır).
+- **Uç nokta:** `https://www.osym.gov.tr/Sayfa/SinavTakvimi` — tek HTML tablo (`#stTakvimListTable`); tarih hücreleri tek tarih ya da `<br>` ile ayrılmış başlangıç/bitiş.
+- **Şart:** Kurumun kamuya açık resmî duyurusu; kaynak belirtilerek kullanılır. Takvim değişebilir — ÖSYM sayfayı günceller, yanıt `alindi` zamanını taşır; kesin tarih için ÖSYM duyurusu esastır.
+- **Davranış:** 6 saat önbellek. Site çoğu zaman 0,2 saniyede yanıt verir, ara sıra ~90 KB'dan sonra takılıp hiç bitirmez; bu yüzden 8 saniyelik zaman aşımı ve üç deneme. Varsayılan yalnızca en az bir tarihi bugünden ileride olan satırlar; `yalnizGelecek=false` tüm yılı verir. Saatler Türkiye saatidir; tarih verilmeyen adımlar null'dur, tahmin edilmez.
 
 ## parametreler — Resmî parametreler (gömülü, kaynaklı)
 

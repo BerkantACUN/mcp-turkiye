@@ -40,6 +40,28 @@ describe('metinGetir', () => {
     expect(istekler).toHaveLength(2);
   });
 
+  it('makes as many attempts as `deneme` asks for a host known to stall, still never on 4xx', async () => {
+    const { fetchImpl, istekler } = sahteFetch([
+      new Error('terminated'),
+      new Error('terminated'),
+      { body: 'sonunda' },
+    ]);
+    expect(
+      await metinGetir('https://x/stall', { kaynakId: 't', fetchImpl, cacheMs: 0, deneme: 3 }),
+    ).toBe('sonunda');
+    expect(istekler).toHaveLength(3);
+    const dort = sahteFetch([{ status: 404 }]);
+    await expect(
+      metinGetir('https://x/d', {
+        kaynakId: 't',
+        fetchImpl: dort.fetchImpl,
+        cacheMs: 0,
+        deneme: 3,
+      }),
+    ).rejects.toMatchObject({ status: 404 });
+    expect(dort.istekler).toHaveLength(1);
+  });
+
   it('does not retry a 404 — a missing bulletin will still be missing', async () => {
     const { fetchImpl, istekler } = sahteFetch([{ status: 404 }]);
     await expect(

@@ -35,6 +35,10 @@ jobs:
     name: live source contracts
     if: github.event_name == 'schedule' || github.event_name == 'push'
     runs-on: ubuntu-latest
+    # On a push the live run is a smoke signal, not a gate: a government
+    # server timing out for a minute must not paint a release commit red.
+    # The weekly scheduled run is the gate — there a failure is real drift.
+    continue-on-error: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

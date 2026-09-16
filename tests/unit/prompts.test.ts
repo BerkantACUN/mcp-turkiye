@@ -29,6 +29,7 @@ describe('prompts', () => {
       'tcmb_kur',
       'afad_depremler',
       'mgm_hava_durumu',
+      'mgm_uyarilar',
       'ibb_trafik_indeksi',
       'resmi_gazete_fihrist',
     ]) {
