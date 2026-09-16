@@ -142,3 +142,29 @@ describe('acikveri tools through the server', () => {
     expect(r.content[0]?.text).toMatch(/tablo servisi \(DataStore\) açık değil/);
   });
 });
+
+describe('acikveri geo-block', () => {
+  it('explains a 403 from a portal known to block foreign IPs', async () => {
+    const { onbellegiTemizle } = await import('../../src/core/http.js');
+    onbellegiTemizle();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('', { status: 403 })),
+    );
+    const [ct, st] = InMemoryTransport.createLinkedPair();
+    await sunucuOlustur().connect(st);
+    const client = new Client({ name: 't', version: '0' });
+    await client.connect(ct);
+    const r = (await client.callTool({
+      name: 'acikveri_ara',
+      arguments: { portal: 'konya', sorgu: 'x' },
+    })) as unknown as {
+      isError?: boolean;
+      content: Array<{ text?: string }>;
+    };
+    expect(r.isError).toBe(true);
+    expect(r.content[0]?.text).toMatch(/Türkiye dışından gelen istekleri engelliyor/);
+    await client.close();
+    vi.unstubAllGlobals();
+  });
+});

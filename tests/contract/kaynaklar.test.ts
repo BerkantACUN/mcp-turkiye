@@ -90,13 +90,24 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: açık veri (CKAN)', () 
     const { jsonGetir } = await import('../../src/core/http.js');
     const { PORTALLAR } = await import('../../src/sources/acikveri/index.js');
     for (const [id, portal] of Object.entries(PORTALLAR)) {
-      const ek = (portal as { ekSertifikalar?: readonly string[] }).ekSertifikalar;
-      const j = await jsonGetir<{ success: boolean; result: { count: number } }>(
-        `${portal.url}/api/3/action/package_search?rows=1`,
-        { kaynakId: `acikveri/${id}`, cacheMs: 0, ...(ek ? { ekSertifikalar: ek } : {}) },
-      );
-      expect(j.success, portal.url).toBe(true);
-      expect(j.result.count, portal.url).toBeGreaterThan(100);
+      const p = portal as { ekSertifikalar?: readonly string[]; yurtDisiEngeli?: boolean };
+      try {
+        const j = await jsonGetir<{ success: boolean; result: { count: number } }>(
+          `${portal.url}/api/3/action/package_search?rows=1`,
+          {
+            kaynakId: `acikveri/${id}`,
+            cacheMs: 0,
+            ...(p.ekSertifikalar ? { ekSertifikalar: p.ekSertifikalar } : {}),
+          },
+        );
+        expect(j.success, portal.url).toBe(true);
+        expect(j.result.count, portal.url).toBeGreaterThan(100);
+      } catch (error) {
+        // A portal that blocks foreign IPs answers 403 from CI's runners; that is
+        // documented behaviour, not a format change. Anything else still fails.
+        const geoEngeli = p.yurtDisiEngeli && (error as { status?: number }).status === 403;
+        if (!geoEngeli) throw error;
+      }
     }
   }, 60_000);
 });

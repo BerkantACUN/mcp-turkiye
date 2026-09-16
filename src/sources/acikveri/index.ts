@@ -19,6 +19,8 @@ interface Portal {
   readonly lisans: string;
   /** Intermediate CAs a portal fails to send; see core/sertifikalar.ts. */
   readonly ekSertifikalar?: readonly string[];
+  /** The portal answers 403 to requests from outside Türkiye (observed from GitHub's runners). */
+  readonly yurtDisiEngeli?: boolean;
 }
 
 export const PORTALLAR = {
@@ -36,6 +38,7 @@ export const PORTALLAR = {
     ad: 'Konya Büyükşehir Belediyesi Açık Veri Portalı',
     url: 'https://acikveri.konya.bel.tr',
     lisans: 'Creative Commons Attribution (CC-BY / CC-BY 4.0)',
+    yurtDisiEngeli: true,
   },
   gaziantep: {
     ad: 'Gaziantep Büyükşehir Belediyesi Açık Veri Portalı',
@@ -147,12 +150,25 @@ async function ckan<T>(
   cacheMs: number,
 ): Promise<T> {
   const url = `${PORTALLAR[portal].url}/api/3/action/${eylem}?${new URLSearchParams(params).toString()}`;
-  const ek = (PORTALLAR[portal] as Portal).ekSertifikalar;
-  const yanit = await jsonGetir<CkanYanit<T>>(url, {
-    kaynakId: `${KAYNAK_ID}/${portal}`,
-    cacheMs,
-    ...(ek ? { ekSertifikalar: ek } : {}),
-  });
+  const bilgi = PORTALLAR[portal] as Portal;
+  let yanit: CkanYanit<T>;
+  try {
+    yanit = await jsonGetir<CkanYanit<T>>(url, {
+      kaynakId: `${KAYNAK_ID}/${portal}`,
+      cacheMs,
+      ...(bilgi.ekSertifikalar ? { ekSertifikalar: bilgi.ekSertifikalar } : {}),
+    });
+  } catch (error) {
+    if (error instanceof KaynakHatasi && error.status === 403 && bilgi.yurtDisiEngeli) {
+      throw new KaynakHatasi(
+        error.kaynakId,
+        url,
+        'portal 403 döndü — bu portal Türkiye dışından gelen istekleri engelliyor; Türkiye içinden ya da bir Türkiye IP adresiyle deneyin',
+        403,
+      );
+    }
+    throw error;
+  }
   if (!yanit.success || yanit.result === undefined) {
     throw new KaynakHatasi(
       `${KAYNAK_ID}/${portal}`,
