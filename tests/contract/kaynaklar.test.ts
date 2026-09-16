@@ -84,3 +84,18 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Opet', () => {
     expect(urunler.some((u) => /motorin/i.test(u))).toBe(true);
   }, 20_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: açık veri (CKAN)', () => {
+  it('both portals answer package_search with CKAN’s envelope', async () => {
+    const { PORTALLAR } = await import('../../src/sources/acikveri/index.js');
+    for (const portal of Object.values(PORTALLAR)) {
+      const r = await fetch(`${portal.url}/api/3/action/package_search?rows=1`, {
+        headers: { 'user-agent': 'mcp-turkiye contract test' },
+      });
+      expect(r.ok, portal.url).toBe(true);
+      const j = (await r.json()) as { success: boolean; result: { count: number } };
+      expect(j.success, portal.url).toBe(true);
+      expect(j.result.count, portal.url).toBeGreaterThan(100);
+    }
+  }, 30_000);
+});

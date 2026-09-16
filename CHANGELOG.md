@@ -8,6 +8,7 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 - **mgm:** `mgm_hava_durumu` — il/ilçe için MGM anlık gözlemi ve 5 günlük tahmin; hadise kodları MGM'nin kendi tablosuyla Türkçe'ye açılır, `-9999` değerleri null.
 - **opet:** `opet_akaryakit` — ilçe bazında Opet pompa fiyatları; il adı ya da plaka kodu, İstanbul'da iki yaka.
+- **acikveri:** `acikveri_ara`, `acikveri_veriseti`, `acikveri_kayitlar` — İBB ve İzmir CKAN portalları: arama, veri seti ayrıntısı (lisans adıyla), DataStore satırları.
 
 ## [0.1.0] — 2026-09-16
 

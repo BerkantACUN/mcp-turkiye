@@ -32,6 +32,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Fiyatlar Opet'in kamuya duyurduğu kendi pompa fiyatlarıdır; tek dağıtıcıyı temsil eder, sektör ortalaması değildir — yanıtlar bunu söyler. Resmî API sözleşmesi yoktur; haftalık sözleşme testi biçimi izler. Opet talep ederse kaynak kaldırılır.
 - **Davranış:** 30 dakika önbellek. İlçe filtresi büyük/küçük harf ve Türkçe karakterden bağımsız.
 
+## acikveri — Belediye açık veri portalları (CKAN)
+
+- **Veri:** İBB Açık Veri Portalı (`data.ibb.gov.tr`, 557 veri seti) ve İzmir Büyükşehir Açık Veri Portalı (`acikveri.bizizmir.com`, 250 veri seti): veri seti arama, ayrıntı, dosyalar ve tablo servisi (DataStore) satırları.
+- **Uç nokta:** CKAN Action API v3 — `package_search`, `package_show`, `datastore_search`.
+- **Şart:** İBB'nin tüm veri setleri "Istanbul Metropolitan Municipality Open Data License" altındadır; İzmir'de çoğu "Izmir Metropolitan Municipality License", bazıları CC-BY, birkaçı belirtilmemiş. Veri seti yanıtı lisansı **adıyla** taşır; kullanmadan önce okunmalıdır.
+- **Davranış:** Arama ve ayrıntı 10 dakika, satırlar 5 dakika önbellekte. Satır okuma en fazla 200 kayıt/çağrı; büyük tablolar `offset` ile sayfalanır. Tablo servisi kapalı kaynaklar için indirme bağlantısı verilir, dosya sunucu tarafından indirilmez.
+
 ## tatil — Resmî tatiller
 
 - **Veri:** Ulusal bayramlar (2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun) ve dinî bayramlar (Diyanet İşleri Başkanlığı "Dini Günler" takvimi, `vakithesaplama.diyanet.gov.tr`).
