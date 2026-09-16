@@ -1,0 +1,72 @@
+{
+  "name": "mcp-turkiye",
+  "version": "0.1.0",
+  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları, AFAD deprem, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "turkey",
+    "türkiye",
+    "tcmb",
+    "afad",
+    "deprem",
+    "döviz",
+    "resmi-tatil",
+    "tckn",
+    "vkn",
+    "iban",
+    "claude",
+    "cursor",
+    "ai-agents"
+  ],
+  "license": "MIT",
+  "author": "Berkant Acun (https://github.com/BerkantACUN)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BerkantACUN/mcp-turkiye.git"
+  },
+  "bugs": "https://github.com/BerkantACUN/mcp-turkiye/issues",
+  "homepage": "https://github.com/BerkantACUN/mcp-turkiye#readme",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "mcp-turkiye": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SOURCES.md",
+    "ACCEPTABLE_USE.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:live": "cross-env MCP_TURKIYE_LIVE=1 vitest run tests/contract",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm run lint && npm run build && npm run test:coverage",
+    "prepublishOnly": "npm run verify"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.8",
+    "@types/node": "^22.10.2",
+    "@vitest/coverage-v8": "^4.1.10",
+    "cross-env": "^10.1.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}
