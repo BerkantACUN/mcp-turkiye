@@ -165,3 +165,34 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE || !process.env.EVDS_API_KEY)(
     }, 20_000);
   },
 );
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: mevzuat.gov.tr', () => {
+  it('finds KVKK by title and serves its article 6 from the consolidated text', async () => {
+    const { jsonGetir, metinGetir } = await import('../../src/core/http.js');
+    const { aramaGovdesi, metinUrl, TURLER } = await import('../../src/sources/mevzuat/index.js');
+    const { aramaSonuclariniDonustur, maddeyiCikar, metniAyristir } = await import(
+      '../../src/sources/mevzuat/parse.js'
+    );
+    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/sources/resmigazete/sertifika.js');
+    const ortak = {
+      kaynakId: 'mevzuat',
+      ekSertifikalar: [GEOTRUST_TLS_RSA_CA_G1],
+      headers: {
+        referer: 'https://www.mevzuat.gov.tr/aramasonuc',
+        'x-requested-with': 'XMLHttpRequest',
+      },
+      cacheMs: 0,
+    };
+    const arama = await jsonGetir('https://www.mevzuat.gov.tr/anasayfa/MevzuatDatatable', {
+      ...ortak,
+      headers: { ...ortak.headers, 'content-type': 'application/json' },
+      govde: aramaGovdesi('kişisel verilerin korunması', TURLER.kanun, 'Baslik', 5),
+    });
+    const { sonuclar } = aramaSonuclariniDonustur(arama);
+    expect(sonuclar.some((s) => s.kimlik === '1.5.6698')).toBe(true);
+
+    const html = await metinGetir(metinUrl(1, 5, '6698'), ortak);
+    const m = maddeyiCikar(metniAyristir(html).satirlar, '6');
+    expect(m?.metin.startsWith('MADDE 6-')).toBe(true);
+  }, 60_000);
+});

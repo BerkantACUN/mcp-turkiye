@@ -1,0 +1,39 @@
+{
+ "draw": 1,
+ "recordsTotal": 1,
+ "recordsFiltered": 1,
+ "data": [
+  {
+   "mevzuatNo": "6698",
+   "mevAdi": "<span style='background-color:yellow'>KİŞİSEL VERİLERİN KORUNMASI</span> KANUNU",
+   "kabulTarih": "24.03.2016",
+   "kabulTarihDosyaPath": null,
+   "resmiGazeteTarihi": "07.04.2016",
+   "resmiGazeteSayisi": "29677",
+   "mevzuatTertip": "5",
+   "nitelik": null,
+   "mukerrer": "HAYIR",
+   "resmiGazeteTarihiYilBaslangic": null,
+   "resmiGazeteTarihiYilBitis": null,
+   "aranacakYer": 0,
+   "mevzuatTur": 1,
+   "tuzukMevzuatTur": 0,
+   "fileType": 1,
+   "mevzuatTurEnumString": "Kanunlar",
+   "url": "mevzuat?MevzuatNo=6698&MevzuatTur=1&MevzuatTertip=5",
+   "docUrl": null,
+   "pdfUrl": null,
+   "tur": 1,
+   "isPlainTextBlank": false,
+   "resmiGazeteTarihiGun": "7",
+   "resmiGazeteTarihiAy": "4",
+   "resmiGazeteTarihiYil": "2016",
+   "resmiGazeteUrl": null,
+   "hasDoc": false,
+   "hasOldLaw": false,
+   "highlightText": null,
+   "mevzuatNoCombine": null
+  }
+ ],
+ "word": null
+}

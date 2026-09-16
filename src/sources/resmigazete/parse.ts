@@ -212,9 +212,12 @@ export function fihristiAyristir(html: string, tarih: string): GazeteFihristi {
 /** Plain text of an article page, for reading a regulation rather than just its title. */
 export function maddeMetniniCikar(html: string): string {
   const govde = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] ?? html;
+  // Word-exported HTML wraps text with hard newlines mid-sentence; only
+  // block boundaries are real line breaks.
   const metin = metneCevir(
     govde
       .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, '')
+      .replace(/\r?\n/g, ' ')
       .replace(/<br\s*\/?>|<\/p>|<\/div>|<\/tr>|<\/h\d>/gi, '\n')
       .replace(/<[^>]+>/g, ' '),
   );

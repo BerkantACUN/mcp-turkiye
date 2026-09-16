@@ -68,6 +68,14 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **TLS notu:** Sunucu sertifika zincirini eksik (ara sertifikasız) gönderir; tarayıcılar eksiği kendileri tamamlar, Node tamamlamaz. Bu yüzden kamuya açık GeoTrust ara sertifikası (`src/sources/resmigazete/sertifika.ts`, 2027-11-02'ye kadar geçerli) Node'un kök deposuna **eklenir** — doğrulama atlanmaz, sertifika kontrolü kapatılmaz. Ara sertifika değişirse haftalık sözleşme testi kırılır.
 - **Davranış:** Bugünün fihristi 10 dakika (gün içinde eklenebilir), geçmiş fihristler ve madde metinleri 24 saat önbellekte. Metin 20.000 karakterlik parçalarla verilir (`baslangic` ile devam).
 
+## mevzuat — Mevzuat Bilgi Sistemi (mevzuat.gov.tr)
+
+- **Veri:** Cumhurbaşkanlığı'nın güncel (konsolide) mevzuat metinleri: kanunlar, tüzükler, yönetmelikler, tebliğler, Cumhurbaşkanı kararları/kararnameleri/genelgeleri. Arama; tam metin; tek madde.
+- **Uç nokta:** `https://www.mevzuat.gov.tr/anasayfa/MevzuatDatatable` (sitenin kendi arama çağrısı, POST) ve `.../anasayfa/MevzuatFihristDetayIframe?MevzuatTur=…&MevzuatNo=…&MevzuatTertip=…` (sitenin görüntüleyicisinin yüklediği metin, HTML).
+- **Şart:** Mevzuat metinleri kamuya açıktır ve resmî güncel metin bu sitedir; yanıt her zaman mevzuat.gov.tr sayfasına bağlantı taşır. Resmî bir API sözleşmesi yoktur; haftalık sözleşme testi biçimi izler. Bu araçlar hukuki danışmanlık değildir; metin, kaynağıyla birlikte olduğu gibi aktarılır.
+- **TLS notu:** Resmî Gazete ile aynı Cumhurbaşkanlığı sertifikası; aynı ara sertifika Node'un kök deposuna eklenir (bkz. resmigazete).
+- **Davranış:** Arama 10 dakika, metinler 24 saat önbellekte (konsolide metin yalnızca bir değişiklik yayımlanınca değişir). Madde çıkarma "MADDE 6-" / "Madde 6 -" / "EK MADDE" / "GEÇİCİ MADDE" başlangıçlarını tanır; bulunamazsa mevcut madde listesi döner.
+
 ## tatil — Resmî tatiller
 
 - **Veri:** Ulusal bayramlar (2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun) ve dinî bayramlar (Diyanet İşleri Başkanlığı "Dini Günler" takvimi, `vakithesaplama.diyanet.gov.tr`).

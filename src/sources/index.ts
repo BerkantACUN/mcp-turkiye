@@ -5,6 +5,7 @@ import { bist } from './bist/index.js';
 import { dogrulama } from './dogrulama/index.js';
 import { evdsKaynagi } from './evds/index.js';
 import { ibb } from './ibb/index.js';
+import { mevzuat } from './mevzuat/index.js';
 import { mgm } from './mgm/index.js';
 import { opet } from './opet/index.js';
 import { resmigazete } from './resmigazete/index.js';
@@ -26,6 +27,7 @@ export const KAYNAKLAR: readonly Kaynak[] = [
   ibb,
   acikveri,
   resmigazete,
+  mevzuat,
   tatil,
   dogrulama,
 ];

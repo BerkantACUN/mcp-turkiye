@@ -45,6 +45,8 @@ export interface IstekSecenekleri {
    * goes through node:https, since fetch offers no per-request CA option.
    */
   readonly ekSertifikalar?: readonly string[];
+  /** POST with this body (already serialised); GET otherwise. */
+  readonly govde?: string;
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000;
@@ -67,14 +69,18 @@ export function onbellegiTemizle(): void {
 
 export async function metinGetir(url: string, secenek: IstekSecenekleri): Promise<string> {
   const cacheMs = secenek.cacheMs ?? DEFAULT_CACHE_MS;
-  const cached = onbellek.get(url);
+  // A POST is as cacheable as a GET here — the same search asked twice in
+  // a minute should not hit the institution twice — but the body is part of
+  // the identity.
+  const anahtar = secenek.govde === undefined ? url : `${url}#${secenek.govde}`;
+  const cached = onbellek.get(anahtar);
   if (cacheMs > 0 && cached && cached.expiresAt > Date.now()) {
     return cached.body;
   }
 
   const body = await getirDene(url, secenek, 2);
   if (cacheMs > 0) {
-    onbellek.set(url, { body, expiresAt: Date.now() + cacheMs });
+    onbellek.set(anahtar, { body, expiresAt: Date.now() + cacheMs });
   }
   return body;
 }
@@ -112,7 +118,9 @@ async function getirDene(
 
   try {
     const response = await fetchImpl(url, {
+      method: secenek.govde === undefined ? 'GET' : 'POST',
       headers: { 'user-agent': USER_AGENT, ...secenek.headers },
+      ...(secenek.govde === undefined ? {} : { body: secenek.govde }),
       signal: controller.signal,
       redirect: 'follow',
     });
@@ -149,9 +157,10 @@ async function getirDene(
 
 /* v8 ignore start -- real TLS only; exercised by the weekly live contract test, not by unit tests with a stubbed fetch */
 /**
- * A fetch-shaped GET over node:https with extra CAs. Only what the sources
- * need: headers, abort signal, redirects followed up to a few hops, and a
- * Response whose status/ok/text/arrayBuffer behave like fetch's.
+ * A fetch-shaped GET/POST over node:https with extra CAs. Only what the
+ * sources need: method, headers, a string body, abort signal, redirects
+ * followed up to a few hops, and a Response whose status/ok/text/arrayBuffer
+ * behave like fetch's.
  */
 function ekSertifikaliFetch(ekSertifikalar: readonly string[]): typeof fetch {
   const ca = [...rootCertificates, ...ekSertifikalar];
@@ -161,11 +170,15 @@ function ekSertifikaliFetch(ekSertifikalar: readonly string[]): typeof fetch {
     kalanYonlendirme: number,
   ): Promise<Response> =>
     new Promise((resolve, reject) => {
+      const govde = typeof init?.body === 'string' ? init.body : undefined;
       const req = httpsRequest(
         url,
         {
-          method: 'GET',
-          headers: init?.headers as Record<string, string> | undefined,
+          method: init?.method ?? 'GET',
+          headers: {
+            ...(init?.headers as Record<string, string> | undefined),
+            ...(govde === undefined ? {} : { 'content-length': String(Buffer.byteLength(govde)) }),
+          },
           ca,
           signal: init?.signal ?? undefined,
         },
@@ -191,6 +204,7 @@ function ekSertifikaliFetch(ekSertifikalar: readonly string[]): typeof fetch {
         },
       );
       req.on('error', reject);
+      if (govde !== undefined) req.write(govde);
       req.end();
     });
   return ((input: string | URL | Request, init?: RequestInit) =>
