@@ -70,6 +70,7 @@ describe('mcp-turkiye server', () => {
       'tcmb_kur',
       'afad_depremler',
       'mgm_hava_durumu',
+      'opet_akaryakit',
       'resmi_tatiller',
       'tatil_mi',
       'dogrula_tckn',

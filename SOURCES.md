@@ -25,6 +25,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** MGM verisi kamuya açıktır ve MGM'ye atıfla kullanılır; sitede "link vermek için" yönergesi bulunur. Resmî bir API sözleşmesi yoktur — biçim değişirse haftalık sözleşme testi yakalar.
 - **Davranış:** İstasyon eşlemesi 24 saat, anlık gözlem 10 dakika, tahmin 30 dakika önbellekte. `-9999` (ölçüm yok) değerleri null'a çevrilir; hadise kodları MGM'nin kendi site betiğindeki tabloyla Türkçe'ye açılır.
 
+## opet — Opet akaryakıt pompa fiyatları
+
+- **Veri:** İlçe bazında güncel pompa fiyatları (benzin, motorin, gazyağı, kalorifer yakıtı, fuel oil).
+- **Uç nokta:** `https://api.opet.com.tr/api/fuelprices/prices?ProvinceCode=<kod>&IncludeAllProducts=true` — Opet'in kendi fiyat sayfasının kullandığı açık uç nokta. İstanbul Anadolu 34, İstanbul Avrupa 934 koduyla ayrı bölgelerdir.
+- **Şart:** Fiyatlar Opet'in kamuya duyurduğu kendi pompa fiyatlarıdır; tek dağıtıcıyı temsil eder, sektör ortalaması değildir — yanıtlar bunu söyler. Resmî API sözleşmesi yoktur; haftalık sözleşme testi biçimi izler. Opet talep ederse kaynak kaldırılır.
+- **Davranış:** 30 dakika önbellek. İlçe filtresi büyük/küçük harf ve Türkçe karakterden bağımsız.
+
 ## tatil — Resmî tatiller
 
 - **Veri:** Ulusal bayramlar (2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun) ve dinî bayramlar (Diyanet İşleri Başkanlığı "Dini Günler" takvimi, `vakithesaplama.diyanet.gov.tr`).

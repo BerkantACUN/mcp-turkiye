@@ -2,6 +2,7 @@ import type { Kaynak } from '../core/source.js';
 import { afad } from './afad/index.js';
 import { dogrulama } from './dogrulama/index.js';
 import { mgm } from './mgm/index.js';
+import { opet } from './opet/index.js';
 import { tatil } from './tatil/index.js';
 import { tcmb } from './tcmb/index.js';
 
@@ -10,4 +11,4 @@ import { tcmb } from './tcmb/index.js';
  * src/sources and a line here — see CONTRIBUTING.md. Order is the order
  * tools are listed to the client.
  */
-export const KAYNAKLAR: readonly Kaynak[] = [tcmb, afad, mgm, tatil, dogrulama];
+export const KAYNAKLAR: readonly Kaynak[] = [tcmb, afad, mgm, opet, tatil, dogrulama];

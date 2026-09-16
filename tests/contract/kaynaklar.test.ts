@@ -71,3 +71,16 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: MGM', () => {
     expect(tahmin.length).toBeGreaterThanOrEqual(5);
   }, 20_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Opet', () => {
+  it('answers Ankara with districts that quote petrol and diesel', async () => {
+    const { fiyatUrl, satirlariDonustur } = await import('../../src/sources/opet/index.js');
+    const r = await fetch(fiyatUrl(6), { headers: { 'user-agent': 'mcp-turkiye contract test' } });
+    expect(r.ok).toBe(true);
+    const rows = satirlariDonustur(await r.json());
+    expect(rows.length).toBeGreaterThan(5);
+    const urunler = Object.keys(rows[0]?.fiyatlar ?? {});
+    expect(urunler.some((u) => /benzin/i.test(u))).toBe(true);
+    expect(urunler.some((u) => /motorin/i.test(u))).toBe(true);
+  }, 20_000);
+});
