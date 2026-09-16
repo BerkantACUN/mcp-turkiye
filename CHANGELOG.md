@@ -4,7 +4,13 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-09-17
+
+İki kaynak, iki portal, iki prompt; on üç kaynak, yirmi altı araç.
+
 ### Added
+
+- **Prompt'lar:** `gunun_ozeti` (günlük özet: kur, deprem, hava, trafik, Resmî Gazete) ve `mevzuat_sorusu` (soruyu ilgili maddeyi alıntılayarak yanıtla).
 
 - **mevzuat:** `mevzuat_ara`, `mevzuat_metin`, `mevzuat_madde` — mevzuat.gov.tr'de arama (10 mevzuat türü, başlık/içerik), resmî güncel tam metin (parçalı, madde listesiyle) ve tek madde çıkarma (`6`, `6/A`, `ek 1`, `geçici 3`). Word kaynaklı sayfalardaki satır kırılmaları birleştirilir; Resmî Gazete metinlerinde de aynı düzeltme.
 - HTTP katmanı: POST desteği (`govde`), önbellek anahtarında gövde.

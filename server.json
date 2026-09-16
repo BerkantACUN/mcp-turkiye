@@ -2,19 +2,19 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.BerkantACUN/mcp-turkiye",
   "title": "mcp-turkiye",
-  "description": "Türkiye'nin kamu verisi: TCMB kur ve EVDS, BIST, AFAD, MGM hava, akaryakıt, Resmî Gazete, açık veri.",
+  "description": "Türkiye'nin kamu verisi: TCMB kur ve EVDS, mevzuat, Resmî Gazete, BIST, AFAD, MGM, yakıt, açık veri",
   "repository": {
     "url": "https://github.com/BerkantACUN/mcp-turkiye",
     "source": "github"
   },
   "websiteUrl": "https://github.com/BerkantACUN/mcp-turkiye#readme",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-turkiye",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

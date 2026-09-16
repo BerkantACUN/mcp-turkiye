@@ -93,6 +93,15 @@ Sonra asistanınıza Türkçe sorun:
 
 Doğrulama araçları **yalnızca biçim** doğrular: kontrol basamakları hesaplanır, hiçbir kuruma sorulmaz, numara makineden çıkmaz. "Geçerli" bir numaranın gerçek bir kişiye ya da kuruma ait olduğu anlamına gelmez; her yanıt bunu açıkça söyler.
 
+## Hazır sorular (prompt)
+
+İstemcinizde slash komutu ya da menü olarak görünür:
+
+| Prompt | Ne yapar |
+|---|---|
+| `gunun_ozeti` | Kur, deprem, hava, trafik ve Resmî Gazete başlıklarını tek seferde toplayıp 10 satırlık günlük özet çıkarır (`il` isteğe bağlı) |
+| `mevzuat_sorusu` | Bir hukuki soruyu mevzuat.gov.tr metninden ilgili maddeyi çekip alıntılayarak, kaynağıyla yanıtlar |
+
 ## TCMB EVDS anahtarı
 
 EVDS, Merkez Bankası'nın istatistik servisidir (TÜFE, politika faizi, kurlar, konut fiyat endeksi, ödemeler dengesi, anketler — 40 binden fazla seri) ve ücretsiz bir kişisel anahtar ister:

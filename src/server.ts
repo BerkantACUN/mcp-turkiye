@@ -1,4 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { promptlariKaydet } from './prompts.js';
 import { KAYNAKLAR } from './sources/index.js';
 import { SURUM } from './surum.js';
 
@@ -19,5 +20,6 @@ export function sunucuOlustur(kaynaklar = KAYNAKLAR): McpServer {
   for (const kaynak of kaynaklar) {
     kaynak.kaydet(server);
   }
+  promptlariKaydet(server);
   return server;
 }
