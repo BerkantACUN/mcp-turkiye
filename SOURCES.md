@@ -55,9 +55,9 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 
 ## acikveri — Belediye açık veri portalları (CKAN)
 
-- **Veri:** İBB Açık Veri Portalı (`data.ibb.gov.tr`, 557 veri seti) ve İzmir Büyükşehir Açık Veri Portalı (`acikveri.bizizmir.com`, 250 veri seti): veri seti arama, ayrıntı, dosyalar ve tablo servisi (DataStore) satırları.
+- **Veri:** İBB Açık Veri Portalı (`data.ibb.gov.tr`, 557 veri seti), İzmir (`acikveri.bizizmir.com`, 250), Konya (`acikveri.konya.bel.tr`, 232) ve Gaziantep (`acikveri.gaziantep.bel.tr`, 252) Büyükşehir açık veri portalları: veri seti arama, ayrıntı, dosyalar ve tablo servisi (DataStore) satırları.
 - **Uç nokta:** CKAN Action API v3 — `package_search`, `package_show`, `datastore_search`.
-- **Şart:** İBB'nin tüm veri setleri "Istanbul Metropolitan Municipality Open Data License" altındadır; İzmir'de çoğu "Izmir Metropolitan Municipality License", bazıları CC-BY, birkaçı belirtilmemiş. Veri seti yanıtı lisansı **adıyla** taşır; kullanmadan önce okunmalıdır.
+- **Şart:** İBB'nin tüm veri setleri "Istanbul Metropolitan Municipality Open Data License" altındadır; İzmir'de çoğu "Izmir Metropolitan Municipality License", bazıları CC-BY, birkaçı belirtilmemiş; Konya'da tamamı CC-BY / CC-BY 4.0; Gaziantep'te çoğu "Gaziantep Açık Veri Lisansı", biri CC-BY 4.0. Gaziantep sunucusu ara sertifikasını göndermez; Sectigo'nun kamuya açık ara sertifikası (`src/core/sertifikalar.ts`) Node'un kök deposuna eklenir, doğrulama atlanmaz. Veri seti yanıtı lisansı **adıyla** taşır; kullanmadan önce okunmalıdır.
 - **Davranış:** Arama ve ayrıntı 10 dakika, satırlar 5 dakika önbellekte. Satır okuma en fazla 200 kayıt/çağrı; büyük tablolar `offset` ile sayfalanır. Tablo servisi kapalı kaynaklar için indirme bağlantısı verilir, dosya sunucu tarafından indirilmez.
 
 ## resmigazete — T.C. Resmî Gazete
@@ -65,7 +65,7 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Veri:** Günlük fihrist (sayı, bölüm, tür, madde başlıkları ve bağlantıları) ve .htm maddelerin düz metni.
 - **Uç nokta:** `https://www.resmigazete.gov.tr/eskiler/YYYY/AA/YYYYAAGG.htm` (fihrist) ve fihristteki madde bağlantıları. Sayfalar windows-1254 kodlamasındadır; sunucu bu kodlamayla çözer.
 - **Şart:** Resmî Gazete metinleri kamuya açıktır. Yalnızca `www.resmigazete.gov.tr` adresleri okunur; PDF maddeler için bağlantı verilir, dosya indirilmez. Mükerrer sayılar fihristte yer almaz.
-- **TLS notu:** Sunucu sertifika zincirini eksik (ara sertifikasız) gönderir; tarayıcılar eksiği kendileri tamamlar, Node tamamlamaz. Bu yüzden kamuya açık GeoTrust ara sertifikası (`src/sources/resmigazete/sertifika.ts`, 2027-11-02'ye kadar geçerli) Node'un kök deposuna **eklenir** — doğrulama atlanmaz, sertifika kontrolü kapatılmaz. Ara sertifika değişirse haftalık sözleşme testi kırılır.
+- **TLS notu:** Sunucu sertifika zincirini eksik (ara sertifikasız) gönderir; tarayıcılar eksiği kendileri tamamlar, Node tamamlamaz. Bu yüzden kamuya açık GeoTrust ara sertifikası (`src/core/sertifikalar.ts`, 2027-11-02'ye kadar geçerli) Node'un kök deposuna **eklenir** — doğrulama atlanmaz, sertifika kontrolü kapatılmaz. Ara sertifika değişirse haftalık sözleşme testi kırılır.
 - **Davranış:** Bugünün fihristi 10 dakika (gün içinde eklenebilir), geçmiş fihristler ve madde metinleri 24 saat önbellekte. Metin 20.000 karakterlik parçalarla verilir (`baslangic` ile devam).
 
 ## mevzuat — Mevzuat Bilgi Sistemi (mevzuat.gov.tr)

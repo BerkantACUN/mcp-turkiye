@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { cevapla, hata, zarfSemasi } from '../../core/cevap.js';
 import { jsonGetir, KaynakHatasi } from '../../core/http.js';
+import { SECTIGO_DV_R36 } from '../../core/sertifikalar.js';
 import { type Kaynak, zarfla } from '../../core/source.js';
 
 const KAYNAK_ID = 'acikveri';
@@ -12,6 +13,14 @@ const KAYNAK_ID = 'acikveri';
  * licence, and the dataset answer carries that licence by name, because
  * "open data" from İBB and from İzmir are two different permissions.
  */
+interface Portal {
+  readonly ad: string;
+  readonly url: string;
+  readonly lisans: string;
+  /** Intermediate CAs a portal fails to send; see core/sertifikalar.ts. */
+  readonly ekSertifikalar?: readonly string[];
+}
+
 export const PORTALLAR = {
   ibb: {
     ad: 'İBB Açık Veri Portalı (İstanbul Büyükşehir Belediyesi)',
@@ -23,11 +32,25 @@ export const PORTALLAR = {
     url: 'https://acikveri.bizizmir.com',
     lisans: 'Izmir Metropolitan Municipality License (çoğu veri seti); bazıları CC-BY',
   },
-} as const;
+  konya: {
+    ad: 'Konya Büyükşehir Belediyesi Açık Veri Portalı',
+    url: 'https://acikveri.konya.bel.tr',
+    lisans: 'Creative Commons Attribution (CC-BY / CC-BY 4.0)',
+  },
+  gaziantep: {
+    ad: 'Gaziantep Büyükşehir Belediyesi Açık Veri Portalı',
+    url: 'https://acikveri.gaziantep.bel.tr',
+    lisans: 'Gaziantep Açık Veri Lisansı (çoğu veri seti); bir kısmı CC-BY 4.0',
+    // The portal serves its chain without the Sectigo intermediate.
+    ekSertifikalar: [SECTIGO_DV_R36],
+  },
+} as const satisfies Record<string, Portal>;
 
 export type PortalId = keyof typeof PORTALLAR;
 
-const portalSemasi = z.enum(['ibb', 'izmir']).describe('ibb (İstanbul) | izmir');
+const portalSemasi = z
+  .enum(['ibb', 'izmir', 'konya', 'gaziantep'])
+  .describe('ibb (İstanbul) | izmir | konya | gaziantep');
 
 interface CkanYanit<T> {
   readonly success?: boolean;
@@ -124,7 +147,12 @@ async function ckan<T>(
   cacheMs: number,
 ): Promise<T> {
   const url = `${PORTALLAR[portal].url}/api/3/action/${eylem}?${new URLSearchParams(params).toString()}`;
-  const yanit = await jsonGetir<CkanYanit<T>>(url, { kaynakId: `${KAYNAK_ID}/${portal}`, cacheMs });
+  const ek = (PORTALLAR[portal] as Portal).ekSertifikalar;
+  const yanit = await jsonGetir<CkanYanit<T>>(url, {
+    kaynakId: `${KAYNAK_ID}/${portal}`,
+    cacheMs,
+    ...(ek ? { ekSertifikalar: ek } : {}),
+  });
   if (!yanit.success || yanit.result === undefined) {
     throw new KaynakHatasi(
       `${KAYNAK_ID}/${portal}`,
@@ -159,7 +187,7 @@ const kaynakSemasi = z.object({
 
 export const acikveri: Kaynak = {
   id: KAYNAK_ID,
-  ad: 'Belediye açık veri portalları (CKAN): İBB, İzmir',
+  ad: 'Belediye açık veri portalları (CKAN): İBB, İzmir, Konya, Gaziantep',
   url: 'https://data.ibb.gov.tr',
   lisans:
     'Her portalın kendi açık veri lisansı; veri seti yanıtı lisansı adıyla taşır (bkz. SOURCES.md)',
@@ -170,7 +198,7 @@ export const acikveri: Kaynak = {
       {
         title: 'Açık veri portalında veri seti ara',
         description:
-          "İBB (İstanbul) ya da İzmir Büyükşehir açık veri portalında veri seti arar: başlık, açıklama, kurum, etiketler, dosya biçimleri. Search datasets on Istanbul's or İzmir's municipal open-data portal (CKAN). Sonuçtaki `ad` ile acikveri_veriseti çağrılır.",
+          'İBB (İstanbul), İzmir, Konya ya da Gaziantep Büyükşehir açık veri portalında veri seti arar: başlık, açıklama, kurum, etiketler, dosya biçimleri. Search datasets on the Istanbul, İzmir, Konya or Gaziantep municipal open-data portal (CKAN). Sonuçtaki `ad` ile acikveri_veriseti çağrılır.',
         inputSchema: {
           portal: portalSemasi,
           sorgu: z.string().min(1).describe('Arama metni, örn. "otopark", "trafik", "nüfus"'),

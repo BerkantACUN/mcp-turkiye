@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { cevapla, hata, zarfSemasi } from '../../core/cevap.js';
 import { jsonGetir, KaynakHatasi, metinGetir } from '../../core/http.js';
+import { GEOTRUST_TLS_RSA_CA_G1 } from '../../core/sertifikalar.js';
 import { type Kaynak, zarfla } from '../../core/source.js';
-import { GEOTRUST_TLS_RSA_CA_G1 } from '../resmigazete/sertifika.js';
 import {
   aramaSonuclariniDonustur,
   kimlikCoz,

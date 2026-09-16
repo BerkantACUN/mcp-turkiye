@@ -1,8 +1,8 @@
 # mcp-turkiye
 
-**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, TCMB EVDS istatistikleri (enflasyon, faiz, 40 binden fazla seri), BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir açık veri portalları, Resmî Gazete fihristi ve metinleri, mevzuat.gov.tr'de kanun/yönetmelik arama ve madde madde güncel metin, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
+**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, TCMB EVDS istatistikleri (enflasyon, faiz, 40 binden fazla seri), BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir/Konya/Gaziantep açık veri portalları, Resmî Gazete fihristi ve metinleri, mevzuat.gov.tr'de kanun/yönetmelik arama ve madde madde güncel metin, resmî tatiller ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
 
-*Turkey's public data as one MCP server: central-bank FX rates, the central bank's EVDS statistics service (inflation, rates, 40,000+ series), Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, Istanbul's and İzmir's open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, consolidated legislation search and article-level text from mevzuat.gov.tr, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
+*Turkey's public data as one MCP server: central-bank FX rates, the central bank's EVDS statistics service (inflation, rates, 40,000+ series), Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, the Istanbul, İzmir, Konya and Gaziantep open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, consolidated legislation search and article-level text from mevzuat.gov.tr, public holidays and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
 
 [![CI](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml/badge.svg)](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mcp-turkiye)](https://www.npmjs.com/package/mcp-turkiye)
@@ -72,9 +72,9 @@ Sonra asistanınıza Türkçe sorun:
 | `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
 | `opet_akaryakit` | İlçe bazında benzin/motorin/gazyağı/fuel oil pompa fiyatları; İstanbul iki yaka | Opet |
 | `ibb_trafik_indeksi` | İstanbul geneli anlık trafik yoğunluğu (0–100), her çağrıda taze | İBB UYM |
-| `acikveri_ara` | İBB ya da İzmir açık veri portalında veri seti arama | İBB, İzmir |
-| `acikveri_veriseti` | Veri seti ayrıntısı: lisans, dosyalar, indirme bağlantıları, tablo servisi var mı | İBB, İzmir |
-| `acikveri_kayitlar` | Tablo servisi açık kaynağın sütun ve satırları (DataStore), sayfalama ve metin filtresi | İBB, İzmir |
+| `acikveri_ara` | İBB, İzmir, Konya ya da Gaziantep açık veri portalında veri seti arama | 4 belediye |
+| `acikveri_veriseti` | Veri seti ayrıntısı: lisans, dosyalar, indirme bağlantıları, tablo servisi var mı | 4 belediye |
+| `acikveri_kayitlar` | Tablo servisi açık kaynağın sütun ve satırları (DataStore), sayfalama ve metin filtresi | 4 belediye |
 | `resmi_gazete_fihrist` | Günün Resmî Gazete fihristi: sayı, bölüm/tür, madde başlıkları ve bağlantıları | Resmî Gazete |
 | `resmi_gazete_metin` | Bir maddenin (yönetmelik, tebliğ, karar) düz metni, 20 bin karakterlik parçalarla | Resmî Gazete |
 | `mevzuat_ara` | Kanun, tüzük, yönetmelik, tebliğ, CB kararı/kararnamesi/genelgesi arama (başlık ya da tam metin) | mevzuat.gov.tr |
@@ -138,7 +138,7 @@ Anahtar yalnızca EVDS isteklerinin `key` başlığında kullanılır; hiçbir y
 
 ## Yol haritası
 
-Sonraki kaynaklar, diğer CKAN portalları, KAP bildirimleri, Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
+Sonraki kaynaklar, KAP bildirimleri, Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Geliştirme
 
@@ -151,7 +151,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Twenty-five tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul and İzmir, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Twenty-five tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries, MGM current conditions and 5-day forecasts for any province or district, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

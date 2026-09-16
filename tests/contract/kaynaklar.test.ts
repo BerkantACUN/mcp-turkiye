@@ -86,25 +86,26 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Opet', () => {
 });
 
 describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: açık veri (CKAN)', () => {
-  it('both portals answer package_search with CKAN’s envelope', async () => {
+  it('every portal answers package_search with CKAN’s envelope', async () => {
+    const { jsonGetir } = await import('../../src/core/http.js');
     const { PORTALLAR } = await import('../../src/sources/acikveri/index.js');
-    for (const portal of Object.values(PORTALLAR)) {
-      const r = await fetch(`${portal.url}/api/3/action/package_search?rows=1`, {
-        headers: { 'user-agent': 'mcp-turkiye contract test' },
-      });
-      expect(r.ok, portal.url).toBe(true);
-      const j = (await r.json()) as { success: boolean; result: { count: number } };
+    for (const [id, portal] of Object.entries(PORTALLAR)) {
+      const ek = (portal as { ekSertifikalar?: readonly string[] }).ekSertifikalar;
+      const j = await jsonGetir<{ success: boolean; result: { count: number } }>(
+        `${portal.url}/api/3/action/package_search?rows=1`,
+        { kaynakId: `acikveri/${id}`, cacheMs: 0, ...(ek ? { ekSertifikalar: ek } : {}) },
+      );
       expect(j.success, portal.url).toBe(true);
       expect(j.result.count, portal.url).toBeGreaterThan(100);
     }
-  }, 30_000);
+  }, 60_000);
 });
 
 describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Resmî Gazete, İBB trafik, BIST', () => {
   it('Resmî Gazete: yesterday’s issue parses through the node:https path with the embedded intermediate', async () => {
     const { metinGetir } = await import('../../src/core/http.js');
     const { fihristiAyristir, gazeteUrl } = await import('../../src/sources/resmigazete/parse.js');
-    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/sources/resmigazete/sertifika.js');
+    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/core/sertifikalar.js');
     // Yesterday, so a not-yet-uploaded "today" cannot fail the test at 06:00 UTC.
     const dun = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const html = await metinGetir(gazeteUrl(dun), {
@@ -173,7 +174,7 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: mevzuat.gov.tr', () => {
     const { aramaSonuclariniDonustur, maddeyiCikar, metniAyristir } = await import(
       '../../src/sources/mevzuat/parse.js'
     );
-    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/sources/resmigazete/sertifika.js');
+    const { GEOTRUST_TLS_RSA_CA_G1 } = await import('../../src/core/sertifikalar.js');
     const ortak = {
       kaynakId: 'mevzuat',
       ekSertifikalar: [GEOTRUST_TLS_RSA_CA_G1],

@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { cevapla, hata, zarfSemasi } from '../../core/cevap.js';
 import { KaynakHatasi, metinGetir } from '../../core/http.js';
+import { GEOTRUST_TLS_RSA_CA_G1 } from '../../core/sertifikalar.js';
 import { type Kaynak, zarfla } from '../../core/source.js';
 import { FihristBicimHatasi, fihristiAyristir, gazeteUrl, maddeMetniniCikar } from './parse.js';
-import { GEOTRUST_TLS_RSA_CA_G1 } from './sertifika.js';
 
 const KAYNAK_ID = 'resmigazete';
 const CHARSET = 'windows-1254';

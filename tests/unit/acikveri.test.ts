@@ -39,7 +39,8 @@ describe('acikveri parse', () => {
   });
 
   it('knows both portals and their licences', () => {
-    expect(Object.keys(PORTALLAR)).toEqual(['ibb', 'izmir']);
+    expect(Object.keys(PORTALLAR)).toEqual(['ibb', 'izmir', 'konya', 'gaziantep']);
+    expect(PORTALLAR.konya.lisans).toMatch(/CC-BY/);
     expect(PORTALLAR.ibb.lisans).toMatch(/Istanbul Metropolitan Municipality/);
   });
 });
