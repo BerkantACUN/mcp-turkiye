@@ -84,21 +84,21 @@ describe('acikveri tools through the server', () => {
     (await client.callTool({ name, arguments: args })) as unknown as {
       isError?: boolean;
       content: Array<{ text?: string }>;
-      structuredContent?: { kaynak: { url: string }; veri: Record<string, unknown> };
+      structuredContent: { kaynak: { url: string }; veri: Record<string, unknown> };
     };
 
   it('searches a portal and cites the portal search page', async () => {
     const r = await cagir('acikveri_ara', { portal: 'ibb', sorgu: 'trafik', limit: 3 });
     expect(r.isError).toBeFalsy();
-    expect(r.structuredContent?.veri.toplam).toBe(17);
-    expect((r.structuredContent?.veri.verisetleri as unknown[]).length).toBe(3);
-    expect(r.structuredContent?.kaynak.url).toBe('https://data.ibb.gov.tr/dataset?q=trafik');
+    expect(r.structuredContent.veri.toplam).toBe(17);
+    expect((r.structuredContent.veri.verisetleri as unknown[]).length).toBe(3);
+    expect(r.structuredContent.kaynak.url).toBe('https://data.ibb.gov.tr/dataset?q=trafik');
   });
 
   it('returns an empty list, not an error, when nothing matches', async () => {
     const r = await cagir('acikveri_ara', { portal: 'izmir', sorgu: 'zzz' });
     expect(r.isError).toBeFalsy();
-    expect(r.structuredContent?.veri.toplam).toBe(0);
+    expect(r.structuredContent.veri.toplam).toBe(0);
   });
 
   it('shows a dataset with its licence and resources', async () => {
@@ -106,11 +106,11 @@ describe('acikveri tools through the server', () => {
       portal: 'ibb',
       ad: 'yatay-trafik-isaretleme-calismalari',
     });
-    expect(r.structuredContent?.veri.lisans).toBe(
+    expect(r.structuredContent.veri.lisans).toBe(
       'Istanbul Metropolitan Municipality Open Data License',
     );
     expect(
-      (r.structuredContent?.veri.kaynaklar as Array<{ tabloServisi: boolean }>)[0]?.tabloServisi,
+      (r.structuredContent.veri.kaynaklar as Array<{ tabloServisi: boolean }>)[0]?.tabloServisi,
     ).toBe(true);
   });
 
@@ -126,12 +126,12 @@ describe('acikveri tools through the server', () => {
       kaynakId: '4b63a1eb-19b3-433c-8aa5-56779dc642e9',
       limit: 2,
     });
-    expect(r.structuredContent?.veri.toplam).toBe(4);
-    expect(
-      (r.structuredContent?.veri.sutunlar as Array<{ ad: string }>).map((s) => s.ad),
-    ).toContain('Olcu');
+    expect(r.structuredContent.veri.toplam).toBe(4);
+    expect((r.structuredContent.veri.sutunlar as Array<{ ad: string }>).map((s) => s.ad)).toContain(
+      'Olcu',
+    );
     // The fixture was captured with limit=3; what is under test is that the limit reaches CKAN.
-    expect((r.structuredContent?.veri.satirlar as unknown[]).length).toBe(3);
+    expect((r.structuredContent.veri.satirlar as unknown[]).length).toBe(3);
     expect(vi.mocked(fetch).mock.calls.some(([u]) => String(u).includes('limit=2'))).toBe(true);
   });
 
