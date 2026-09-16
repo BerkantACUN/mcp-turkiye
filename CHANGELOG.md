@@ -4,6 +4,12 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-09-16
+
+### Fixed
+
+- npm paketine `mcpName` eklendi; 0.2.0 bu alan olmadan yayımlandığı için resmi MCP Registry sahiplik doğrulamasından geçemiyordu. Kod değişikliği yok.
+
 ## [0.2.0] — 2026-09-16
 
 Üç yeni kaynak, on dört araç.
