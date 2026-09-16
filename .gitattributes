@@ -1,0 +1,5 @@
+# Force LF everywhere regardless of platform/git config — Windows CI runners
+# default to autocrlf=true and rewrite checked-out files to CRLF, which then
+# fails biome's format check (expects LF). This keeps checkout deterministic
+# on every OS instead of depending on each contributor's local git config.
+* text=auto eol=lf
