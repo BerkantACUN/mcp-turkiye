@@ -8,6 +8,7 @@ import { ibb } from './ibb/index.js';
 import { mevzuat } from './mevzuat/index.js';
 import { mgm } from './mgm/index.js';
 import { opet } from './opet/index.js';
+import { parametreler } from './parametreler/index.js';
 import { resmigazete } from './resmigazete/index.js';
 import { tatil } from './tatil/index.js';
 import { tcmb } from './tcmb/index.js';
@@ -29,5 +30,6 @@ export const KAYNAKLAR: readonly Kaynak[] = [
   resmigazete,
   mevzuat,
   tatil,
+  parametreler,
   dogrulama,
 ];

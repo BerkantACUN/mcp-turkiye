@@ -82,6 +82,13 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Kanun metni ve Diyanet takvimi kamuya açıktır.
 - **Davranış:** Tarihler pakete gömülüdür, ağ erişimi yoktur. Dinî bayram tablosu yalnızca doğrulanmış yıllar için vardır (şu an 2026, 2027); tablo olmayan yıl için dinî bayramlar **tahmin edilmez**, yanıtta `diniBayramlarDahil=false` döner. Yeni yıl tablosu Diyanet yayımladığında eklenir.
 
+## parametreler — Resmî parametreler (gömülü, kaynaklı)
+
+- **Veri:** Yıl bazında resmî sayılar: asgari ücret (günlük brüt, aylık brüt, aylık net) ve SGK prime esas kazanç alt/üst sınırı. Şu an 2026.
+- **Kaynak:** Karara bağlanan sayı Resmî Gazete'den (2026: Asgari Ücret Tespit Komisyonu Kararı, RG 26.12.2025 sayı 33119); türetilen her sayı dayandığı kanun maddesiyle (5510 s. K. m. 81–82, 4447 s. K. m. 49, 193 s. GVK m. 23/18, 488 s. DVK) ve hesabıyla verilir. Kanun maddeleri bu sunucunun kendi `mevzuat_madde` aracıyla doğrulandı.
+- **Kural:** Birincil metne bağlanamayan sayı eklenmez — kıdem tazminatı tavanı (memur maaş katsayısına bağlı) ve gelir vergisi dilimleri bu yüzden bu sürümde yoktur. Yıl için tablo yoksa `mevcut=false` döner, tahmin edilmez.
+- **Davranış:** Ağ erişimi yok; her yıl için tablo yeni karar yayımlanınca güncellenir.
+
 ## dogrulama — Çevrimdışı biçim doğrulama
 
 - **Veri:** T.C. Kimlik Numarası, Vergi Kimlik Numarası ve TR IBAN kontrol basamağı algoritmaları; plaka kodu tablosu.

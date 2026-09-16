@@ -87,6 +87,7 @@ describe('mcp-turkiye server', () => {
       'mevzuat_madde',
       'resmi_tatiller',
       'tatil_mi',
+      'resmi_parametreler',
       'dogrula_tckn',
       'dogrula_vkn',
       'dogrula_iban',
