@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.BerkantACUN/mcp-turkiye",
   "title": "mcp-turkiye",
-  "description": "Türkiye'nin kamu verisi: TCMB/EVDS, mevzuat, RG, BIST, kripto, deprem, MGM, eczane, İSPARK, metro, hal, haber",
+  "description": "Türkiye kamu verisi: TCMB/EVDS, mevzuat, RG, deprem, MGM, eczane, otopark, metro, hal, haber",
   "repository": {
     "url": "https://github.com/BerkantACUN/mcp-turkiye",
     "source": "github"
