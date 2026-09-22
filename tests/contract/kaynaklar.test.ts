@@ -281,3 +281,104 @@ describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: Kandilli, MGM uyarılar,
     expect(yks?.sinav?.baslangic).toMatch(/^\d{4}-\d{2}-\d{2}/);
   }, 30_000);
 });
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: İBB servisleri', () => {
+  const h = { headers: { 'user-agent': 'mcp-turkiye contract test' } };
+
+  it('on-duty pharmacies list at least ten districts with phone numbers', async () => {
+    const { ECZANE_URL, eczaneleriDonustur } = await import('../../src/sources/ibb/eczane.js');
+    const e = eczaneleriDonustur(await (await fetch(ECZANE_URL, h)).json());
+    expect(e.length).toBeGreaterThan(30);
+    expect(new Set(e.map((x) => x.ilce)).size).toBeGreaterThan(10);
+    expect(e.filter((x) => x.telefon).length).toBeGreaterThan(e.length / 2);
+  }, 20_000);
+
+  it('İSPARK lists hundreds of car parks with capacities and coordinates', async () => {
+    const { OTOPARK_URL, otoparklariDonustur } = await import('../../src/sources/ibb/otopark.js');
+    const o = otoparklariDonustur(await (await fetch(OTOPARK_URL, h)).json());
+    expect(o.length).toBeGreaterThan(100);
+    expect(o.filter((x) => x.kapasite > 0 && x.enlem !== null).length).toBeGreaterThan(100);
+  }, 20_000);
+
+  it('air quality: stations and a 24-hour series with at least one AQI value', async () => {
+    const {
+      ISTASYONLAR_URL,
+      istasyonlariDonustur,
+      olcumUrl,
+      olcumleriDonustur,
+      son24Saat,
+      sonOlcum,
+    } = await import('../../src/sources/ibb/havakalitesi.js');
+    const s = istasyonlariDonustur(await (await fetch(ISTASYONLAR_URL, h)).json());
+    expect(s.length).toBeGreaterThan(20);
+    const [baslangic, bitis] = son24Saat();
+    let endeks: number | null = null;
+    for (const ist of s.slice(0, 6)) {
+      const o = olcumleriDonustur(
+        await (await fetch(olcumUrl(ist.id, baslangic, bitis), h)).json(),
+      );
+      endeks = sonOlcum(o)?.endeks ?? null;
+      if (endeks !== null) break;
+    }
+    expect(endeks).toBeTypeOf('number');
+  }, 20_000);
+
+  it('Metro İstanbul: lines with first/last train and ordered stations', async () => {
+    const { HATLAR_URL, ISTASYONLAR_URL, hatlariDonustur, istasyonlariDonustur } = await import(
+      '../../src/sources/ibb/metro.js'
+    );
+    const hatlar = hatlariDonustur(await (await fetch(HATLAR_URL, h)).json());
+    expect(hatlar.map((x) => x.ad)).toContain('M2');
+    expect(hatlar.find((x) => x.ad === 'M2')?.ilkSefer).toMatch(/^\d{2}:\d{2}$/);
+    const i = istasyonlariDonustur(await (await fetch(ISTASYONLAR_URL, h)).json());
+    expect(i.filter((x) => x.hat === 'M2').length).toBeGreaterThan(10);
+  }, 20_000);
+});
+
+describe.skipIf(!process.env.MCP_TURKIYE_LIVE)('canlı: İzmir, BtcTurk, haber', () => {
+  const h = { headers: { 'user-agent': 'mcp-turkiye contract test' } };
+
+  it('İzmir: pharmacies today, produce bulletin of the last week, buses at a stop', async () => {
+    const {
+      ECZANE_URL,
+      eczaneleriDonustur,
+      halUrl,
+      halFiyatlariniDonustur,
+      duragaYaklasanUrl,
+      otobusleriDonustur,
+    } = await import('../../src/sources/izmir/index.js');
+    const e = eczaneleriDonustur(await (await fetch(ECZANE_URL, h)).json());
+    expect(e.length).toBeGreaterThan(20);
+    let fiyat = 0;
+    for (let g = 0; g < 7 && fiyat === 0; g++) {
+      const d = new Date(Date.now() - g * 24 * 60 * 60 * 1000);
+      const tarih = d.toISOString().slice(0, 10);
+      const r = await fetch(halUrl('sebzemeyve', tarih), h);
+      if (r.status === 204) continue;
+      fiyat = halFiyatlariniDonustur(await r.json(), halUrl('sebzemeyve', tarih)).fiyatlar.length;
+    }
+    expect(fiyat).toBeGreaterThan(50);
+    const r = await fetch(duragaYaklasanUrl(21050), h);
+    expect(r.ok).toBe(true);
+    expect(Array.isArray(otobusleriDonustur(await r.json(), 'u'))).toBe(true);
+  }, 40_000);
+
+  it('BtcTurk: BTCTRY quoted with a positive last price', async () => {
+    const { TICKER_URL, kurlariDonustur, kurlariSec } = await import(
+      '../../src/sources/btcturk/index.js'
+    );
+    const k = kurlariSec(kurlariDonustur(await (await fetch(TICKER_URL, h)).json()), 'BTC');
+    expect(k[0]?.cift).toBe('BTCTRY');
+    expect(k[0]?.son).toBeGreaterThan(0);
+  }, 20_000);
+
+  it('AA and TRT feeds parse to dated headlines', async () => {
+    const { KAYNAKLAR, haberleriAyristir } = await import('../../src/sources/haber/index.js');
+    for (const k of ['aa', 'trt'] as const) {
+      const url = KAYNAKLAR[k].besleme(KAYNAKLAR[k].kategoriler[0]);
+      const haberler = haberleriAyristir(await (await fetch(url, h)).text(), url);
+      expect(haberler.length, k).toBeGreaterThan(10);
+      expect(haberler[0]?.yayin, k).toMatch(/^\d{4}-/);
+    }
+  }, 20_000);
+});

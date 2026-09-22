@@ -1,8 +1,8 @@
 {
   "name": "mcp-turkiye",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "mcpName": "io.github.BerkantACUN/mcp-turkiye",
-  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları, TCMB EVDS istatistikleri, mevzuat.gov.tr (KVKK madde madde), AFAD ve Kandilli deprem, MGM hava durumu, akaryakıt fiyatları, BIST, İstanbul trafik, İBB/İzmir açık veri, Resmî Gazete, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
+  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda — TCMB kurları ve EVDS istatistikleri, kripto TL fiyatları, mevzuat.gov.tr, AFAD ve Kandilli deprem, MGM hava durumu, akaryakıt, BIST, nöbetçi eczane, İSPARK otopark, hava kalitesi, Metro İstanbul, İzmir ESHOT ve hal fiyatları, il/ilçe bilgisi, AA/TRT haber başlıkları, açık veri portalları, Resmî Gazete, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as an MCP server.",
   "keywords": [
     "mcp",
     "mcp-server",
@@ -38,7 +38,17 @@
     "iban",
     "claude",
     "cursor",
-    "ai-agents"
+    "ai-agents",
+    "nobetci-eczane",
+    "ispark",
+    "hava-kalitesi",
+    "metro-istanbul",
+    "eshot",
+    "hal-fiyatlari",
+    "kripto",
+    "btcturk",
+    "haber",
+    "il-ilce"
   ],
   "license": "MIT",
   "author": "Berkant Acun (https://github.com/BerkantACUN)",

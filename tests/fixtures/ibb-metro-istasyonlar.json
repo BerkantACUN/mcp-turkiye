@@ -1,0 +1,348 @@
+{
+ "Success": true,
+ "Error": null,
+ "Data": [
+  {
+   "Id": 20,
+   "Name": "YENIKAPI",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Yenikapı",
+   "Order": 1,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-01",
+   "DetailInfo": {
+    "Escolator": 14,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.0055971704",
+    "Longitude": "28.9513306172"
+   }
+  },
+  {
+   "Id": 21,
+   "Name": "VEZNECILER",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Vezneciler-İstanbul Ü.",
+   "Order": 2,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-02",
+   "DetailInfo": {
+    "Escolator": 19,
+    "Lift": 10,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.011475",
+    "Longitude": "28.960705"
+   }
+  },
+  {
+   "Id": 22,
+   "Name": "HALIC",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Haliç",
+   "Order": 3,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-03",
+   "DetailInfo": {
+    "Escolator": 8,
+    "Lift": 6,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.0224366195",
+    "Longitude": "28.9664183343"
+   }
+  },
+  {
+   "Id": 23,
+   "Name": "SISHANE",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Şişhane",
+   "Order": 4,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-04",
+   "DetailInfo": {
+    "Escolator": 32,
+    "Lift": 5,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.028298",
+    "Longitude": "28.97285"
+   }
+  },
+  {
+   "Id": 24,
+   "Name": "TAKSIM",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Taksim",
+   "Order": 5,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-05",
+   "DetailInfo": {
+    "Escolator": 34,
+    "Lift": 7,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.038496",
+    "Longitude": "28.985783"
+   }
+  },
+  {
+   "Id": 25,
+   "Name": "OSMANBEY",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Osmanbey",
+   "Order": 6,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-06",
+   "DetailInfo": {
+    "Escolator": 15,
+    "Lift": 2,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.052955",
+    "Longitude": "28.987375"
+   }
+  },
+  {
+   "Id": 26,
+   "Name": "SISLI-MECIDIYEKOY",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Şişli-Mecidiyeköy",
+   "Order": 7,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-07",
+   "DetailInfo": {
+    "Escolator": 25,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.0645069127",
+    "Longitude": "28.9926697578"
+   }
+  },
+  {
+   "Id": 27,
+   "Name": "GAYRETTEPE",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Gayrettepe",
+   "Order": 8,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-08",
+   "DetailInfo": {
+    "Escolator": 18,
+    "Lift": 9,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": true,
+    "Latitude": "41.0690012375",
+    "Longitude": "29.0109200808"
+   }
+  },
+  {
+   "Id": 28,
+   "Name": "LEVENT",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Levent",
+   "Order": 9,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-09",
+   "DetailInfo": {
+    "Escolator": 22,
+    "Lift": 2,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.0767734293",
+    "Longitude": "29.0136876237"
+   }
+  },
+  {
+   "Id": 29,
+   "Name": "4.LEVENT",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "4.Levent",
+   "Order": 10,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-10",
+   "DetailInfo": {
+    "Escolator": 20,
+    "Lift": 5,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.0860080659",
+    "Longitude": "29.0070897722"
+   }
+  },
+  {
+   "Id": 30,
+   "Name": "SANAYI MAHALLESI",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Sanayi Mahallesi",
+   "Order": 11,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-11",
+   "DetailInfo": {
+    "Escolator": 26,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.0943240181",
+    "Longitude": "29.0053380126"
+   }
+  },
+  {
+   "Id": 31,
+   "Name": "SEYRANTEPE",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Seyrantepe",
+   "Order": 12,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-12",
+   "DetailInfo": {
+    "Escolator": 18,
+    "Lift": 5,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.100906",
+    "Longitude": "28.997775"
+   }
+  },
+  {
+   "Id": 32,
+   "Name": "ITU-AYAZAGA",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "İTÜ-Ayazağa",
+   "Order": 13,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-13",
+   "DetailInfo": {
+    "Escolator": 20,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.108094796",
+    "Longitude": "29.0207947235"
+   }
+  },
+  {
+   "Id": 33,
+   "Name": "ATATURK OTO SANAYI",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Atatürk Oto Sanayi",
+   "Order": 14,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-14",
+   "DetailInfo": {
+    "Escolator": 15,
+    "Lift": 1,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.1182574386",
+    "Longitude": "29.0241897659"
+   }
+  },
+  {
+   "Id": 34,
+   "Name": "DARUSSAFAKA",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Darüşşafaka",
+   "Order": 15,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-15",
+   "DetailInfo": {
+    "Escolator": 24,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.1295823098",
+    "Longitude": "29.0251244919"
+   }
+  },
+  {
+   "Id": 35,
+   "Name": "HACIOSMAN",
+   "LineId": 1,
+   "LineName": "M2",
+   "Description": "Hacıosman",
+   "Order": 16,
+   "IsActive": null,
+   "FunctionalCode": "M-M02-S-H-I-16",
+   "DetailInfo": {
+    "Escolator": 37,
+    "Lift": 6,
+    "BabyRoom": false,
+    "WC": true,
+    "Masjid": false,
+    "Latitude": "41.1397745691",
+    "Longitude": "29.0304324362"
+   }
+  },
+  {
+   "Id": 187,
+   "Name": "KABATAS",
+   "LineId": 4,
+   "LineName": "F1",
+   "Description": "Kabataş",
+   "Order": 2,
+   "IsActive": true,
+   "FunctionalCode": "M-F01-S-H-I-01",
+   "DetailInfo": {
+    "Escolator": 4,
+    "Lift": 4,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.0338745666",
+    "Longitude": "28.9922350785"
+   }
+  },
+  {
+   "Id": 188,
+   "Name": "TAKSIM",
+   "LineId": 4,
+   "LineName": "F1",
+   "Description": "Taksim",
+   "Order": 1,
+   "IsActive": true,
+   "FunctionalCode": "M-F01-S-H-I-02",
+   "DetailInfo": {
+    "Escolator": 0,
+    "Lift": 1,
+    "BabyRoom": false,
+    "WC": false,
+    "Masjid": false,
+    "Latitude": "41.0366994647",
+    "Longitude": "28.9868190279"
+   }
+  }
+ ]
+}

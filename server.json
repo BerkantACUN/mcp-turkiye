@@ -2,19 +2,19 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.BerkantACUN/mcp-turkiye",
   "title": "mcp-turkiye",
-  "description": "Türkiye'nin kamu verisi: TCMB/EVDS, mevzuat, Resmî Gazete, BIST, AFAD, Kandilli, MGM, ÖSYM, CKAN",
+  "description": "Türkiye'nin kamu verisi: TCMB/EVDS, mevzuat, RG, BIST, kripto, deprem, MGM, eczane, İSPARK, metro, hal, haber",
   "repository": {
     "url": "https://github.com/BerkantACUN/mcp-turkiye",
     "source": "github"
   },
   "websiteUrl": "https://github.com/BerkantACUN/mcp-turkiye#readme",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-turkiye",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

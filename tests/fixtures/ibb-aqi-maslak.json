@@ -1,0 +1,80 @@
+[
+ {
+  "ReadTime": "2026-09-21T18:00:00",
+  "Concentration": {
+   "PM10": 9.0,
+   "SO2": 3.8,
+   "O3": 77.8,
+   "NO2": 10.3,
+   "CO": null
+  },
+  "AQI": {
+   "PM10": 23.0,
+   "SO2": 2.0,
+   "O3": 36.0,
+   "NO2": 5.0,
+   "CO": null,
+   "AQIIndex": 36.0,
+   "ContaminantParameter": "O3",
+   "State": "Hava kalitesi memnun edici ve hava kirliliği az riskli veya hiç risk teşkil etmiyor.",
+   "Color": "#13a261"
+  }
+ },
+ {
+  "ReadTime": "2026-09-21T19:00:00",
+  "Concentration": {
+   "PM10": 12.1,
+   "SO2": 3.7,
+   "O3": 69.5,
+   "NO2": 16.6,
+   "CO": null
+  },
+  "AQI": {
+   "PM10": 23.0,
+   "SO2": 2.0,
+   "O3": 36.0,
+   "NO2": 8.0,
+   "CO": null,
+   "AQIIndex": 36.0,
+   "ContaminantParameter": "O3",
+   "State": "Hava kalitesi memnun edici ve hava kirliliği az riskli veya hiç risk teşkil etmiyor.",
+   "Color": "#13a261"
+  }
+ },
+ {
+  "ReadTime": "2026-09-21T20:00:00",
+  "Concentration": {
+   "PM10": 33.6,
+   "SO2": 3.5,
+   "O3": 31.4,
+   "NO2": 34.8,
+   "CO": null
+  },
+  "AQI": {
+   "PM10": 23.0,
+   "SO2": 2.0,
+   "O3": 33.0,
+   "NO2": 17.0,
+   "CO": null,
+   "AQIIndex": 33.0,
+   "ContaminantParameter": "O3",
+   "State": "Hava kalitesi memnun edici ve hava kirliliği az riskli veya hiç risk teşkil etmiyor.",
+   "Color": "#13a261"
+  }
+ },
+ {
+  "ReadTime": "2026-09-21T21:00:00",
+  "Concentration": null,
+  "AQI": null
+ },
+ {
+  "ReadTime": "2026-09-21T22:00:00",
+  "Concentration": null,
+  "AQI": null
+ },
+ {
+  "ReadTime": "2026-09-21T23:00:00",
+  "Concentration": null,
+  "AQI": null
+ }
+]

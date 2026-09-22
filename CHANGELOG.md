@@ -4,6 +4,24 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-09-22
+
+Beş yeni kaynak, on altı yeni araç: yirmi bir kaynak, kırk altı araç. Hepsi anahtarsız; İBB ve İzmir servisleri belediyelerin açık veri portallarında ilanlı API'lerdir.
+
+### Added
+
+- **ibb:** `ibb_nobetci_eczane` (İstanbul'da bugün nöbetçi eczaneler, ilçe süzgeci), `ibb_otopark` (İSPARK anlık boş yer/doluluk; koordinat verilince en yakından, haversine km ile), `ibb_otopark_detay` (tarife, adres, aylık abonelik), `ibb_hava_kalitesi` (28 istasyon: AQI, baskın kirletici, PM10/SO2/O3/NO2/CO; tek istasyon için son 24 saatin saatlik serisi — pencere saat başına hizalanır, aksi hâlde servis boş kova döndürüyor), `ibb_metro` (hatlar, ilk/son sefer, bir hattın sıralı istasyonları ve donanımı), `ibb_metro_duyurular`. Kaynak adı "İstanbul Büyükşehir Belediyesi (İBB)" oldu; trafik indeksi aynı kaynakta.
+- **izmir:** `izmir_nobetci_eczane`, `izmir_hal_fiyatlari` (toptancı hali günlük sebze-meyve/balık bülteni; bülten olmayan günde boş liste, hata değil), `izmir_otobus` (ESHOT durağına yaklaşan otobüsler, canlı).
+- **btcturk:** `btcturk_kripto` — 180'den fazla kripto varlığın TRY/USDT fiyatı, sembol listesi ya da hacme göre ilk 30.
+- **haber:** `haber_basliklari` — Anadolu Ajansı (11 kategori) ve TRT Haber (12 kategori) RSS: başlık, özet, bağlantı, zaman; bağımlılıksız RSS ayrıştırıcı.
+- **iller:** `il_bilgisi`, `ilce_ara`, `iller_listesi` — 81 il ve 973 ilçe (nüfus, yüzölçümü, rakım, plaka ve alan kodu, bölge, koordinat), turkiye-api'nin MIT veri setinden `scripts/iller-veri.mjs` ile gömülü; çevrimdışı.
+- Çekirdek: `sadelestir` (Türkçe harf ve boşluk katlayan karşılaştırma) `src/core/metin.ts` içinde ortak.
+- Canlı sözleşme testleri: İBB dört servisi, İzmir üçü, BtcTurk, AA ve TRT.
+
+### Research
+
+Aday kaynakların taranıp elendiği araştırma notu ve ikinci dalga (İETT SOAP, ASKİ baraj, TFF, EPDK tarife, GİB vergi takvimi) README yol haritasında; Diyanet namaz vakitleri resmî API anahtarı gerektirdiğinden beklemede.
+
 ## [0.7.0] — 2026-09-17
 
 İki yeni kurum, bir yeni MGM aracı: on beş kaynak, otuz araç.

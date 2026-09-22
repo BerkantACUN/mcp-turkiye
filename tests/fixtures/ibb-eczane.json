@@ -1,0 +1,128 @@
+{
+ "ArrayOfAramaList": {
+  "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+  "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+  "AramaList": [
+   {
+    "ADI": "BURGAZADA ECZANESİ",
+    "ADRES": "Burgazadası Mahallesi, Çınarlık Sokak, 3",
+    "TELEFON": "+902163812112",
+    "LON": "29.06919493888460",
+    "LAT": "40.87998754816050",
+    "ILCEID": "1103",
+    "MESAFE": "0",
+    "ILCEADI": "ADALAR"
+   },
+   {
+    "ADI": "DENİZ ECZANESİ",
+    "ADRES": "Kınalıada Mahallesi, İskele Sokak, 3/B",
+    "TELEFON": "+902163815181",
+    "LON": "29.05476093341990",
+    "LAT": "40.91038290028480",
+    "ILCEID": "1103",
+    "MESAFE": "0",
+    "ILCEADI": "ADALAR"
+   },
+   {
+    "ADI": "HAYAT ECZANESİ",
+    "ADRES": "Heybeliada Mahallesi, Ayyıldız Caddesi, 43",
+    "TELEFON": "+902163519907",
+    "LON": "29.09972334614150",
+    "LAT": "40.87805004911360",
+    "ILCEID": "1103",
+    "MESAFE": "0",
+    "ILCEADI": "ADALAR"
+   },
+   {
+    "ADI": "MERKEZ ECZANESİ",
+    "ADRES": "Nizam Mahallesi, 23 Nisan Caddesi, 12",
+    "TELEFON": "+902163826392",
+    "LON": "29.12799810803930",
+    "LAT": "40.87385668650370",
+    "ILCEID": "1103",
+    "MESAFE": "0",
+    "ILCEADI": "ADALAR"
+   },
+   {
+    "ADI": "NİMET ECZANESİ",
+    "ADRES": "Basınköy Mahallesi, Yan Sokak, 1-1/A",
+    "TELEFON": "+905344984082",
+    "LON": "28.79306200009140",
+    "LAT": "40.980848998137",
+    "ILCEID": "1166",
+    "MESAFE": "0",
+    "ILCEADI": "BAKIRKÖY"
+   },
+   {
+    "ADI": "DEVA ECZANESİ",
+    "ADRES": "Zuhuratbaba Mahallesi, Özkul Sokak, 4/1A",
+    "TELEFON": "+902125714188",
+    "LON": "28.86934613403660",
+    "LAT": "40.99220069874350",
+    "ILCEID": "1166",
+    "MESAFE": "0",
+    "ILCEADI": "BAKIRKÖY"
+   },
+   {
+    "ADI": "DENİZ ECZANESİ",
+    "ADRES": "Yeşilköy Mahallesi, Yeşilköy İstanbul Caddesi, 79/D",
+    "TELEFON": "+902126633773",
+    "LON": "28.83555455169110",
+    "LAT": "40.95969890383720",
+    "ILCEID": "1166",
+    "MESAFE": "0",
+    "ILCEADI": "BAKIRKÖY"
+   },
+   {
+    "ADI": "ALAS ECZANESİ",
+    "ADRES": "Yenimahalle Mahallesi, 10 Temmuz Caddesi, No:16/B",
+    "TELEFON": "+905523120693",
+    "LON": "28.88102137928360",
+    "LAT": "40.98134618473360",
+    "ILCEID": "1166",
+    "MESAFE": "0",
+    "ILCEADI": "BAKIRKÖY"
+   },
+   {
+    "ADI": "MELİS ECZANESİ",
+    "ADRES": "Gayrettepe Mahallesi, Yener Sokak, 2",
+    "TELEFON": "+902122727110",
+    "LON": "29.01049739057670",
+    "LAT": "41.06345975066910",
+    "ILCEID": "1183",
+    "MESAFE": "0",
+    "ILCEADI": "BEŞİKTAŞ"
+   },
+   {
+    "ADI": "ÖZGE SELÇİK ECZANESİ",
+    "ADRES": "Mecidiye Mahallesi, Dereboyu Caddesi, 155/A",
+    "TELEFON": "+902122596586",
+    "LON": "29.02337199982210",
+    "LAT": "41.05301199775180",
+    "ILCEID": "1183",
+    "MESAFE": "0",
+    "ILCEADI": "BEŞİKTAŞ"
+   },
+   {
+    "ADI": "KORKUT ECZANESİ",
+    "ADRES": "Levent Mahallesi, Gonca Sokak, No:17/B",
+    "TELEFON": "+902123245219",
+    "LON": "29.016787646950",
+    "LAT": "41.07567974062730",
+    "ILCEID": "1183",
+    "MESAFE": "0",
+    "ILCEADI": "BEŞİKTAŞ"
+   },
+   {
+    "ADI": "HANDAN ECZANESİ",
+    "ADRES": "Tokatköy Mahallesi, Sultan Aziz Caddesi, No:76/A",
+    "TELEFON": "+902163231075",
+    "LON": "29.09004312014010",
+    "LAT": "41.15102069596360",
+    "ILCEID": "1185",
+    "MESAFE": "0",
+    "ILCEADI": "BEYKOZ"
+   }
+  ]
+ }
+}

@@ -2,6 +2,10 @@ import { z } from 'zod';
 import { cevapla, hata, zarfSemasi } from '../../core/cevap.js';
 import { jsonGetir, KaynakHatasi } from '../../core/http.js';
 import { type Kaynak, zarfla } from '../../core/source.js';
+import { eczaneAracinikaydet } from './eczane.js';
+import { havaKalitesiAraciniKaydet } from './havakalitesi.js';
+import { metroAraclariniKaydet } from './metro.js';
+import { otoparkAraclariniKaydet } from './otopark.js';
 
 const KAYNAK_ID = 'ibb';
 const TRAFIK_URL = 'https://tkmservices.ibb.gov.tr/web/api/TrafficData/v1/TrafficIndex';
@@ -22,10 +26,10 @@ export function trafikIndeksiniOku(ham: unknown): number {
 
 export const ibb: Kaynak = {
   id: KAYNAK_ID,
-  ad: 'İBB Ulaşım Yönetim Merkezi',
-  url: 'https://uym.ibb.gov.tr/',
+  ad: 'İstanbul Büyükşehir Belediyesi (İBB)',
+  url: 'https://data.ibb.gov.tr/',
   lisans:
-    "İBB'nin kendi trafik haritasının kullandığı açık uç nokta; kaynak belirtilerek kullanılır (bkz. SOURCES.md)",
+    "İSPARK, hava kalitesi ve Metro İstanbul servisleri İBB Açık Veri Portalı'nda ilanlı (Istanbul Metropolitan Municipality Open Data License); trafik indeksi ve nöbetçi eczane İBB'nin kendi harita sitelerinin açık uç noktaları, kaynak belirtilerek (bkz. SOURCES.md)",
 
   kaydet(server) {
     server.registerTool(
@@ -57,5 +61,9 @@ export const ibb: Kaynak = {
         }
       },
     );
+    eczaneAracinikaydet(ibb, server);
+    otoparkAraclariniKaydet(ibb, server);
+    havaKalitesiAraciniKaydet(ibb, server);
+    metroAraclariniKaydet(ibb, server);
   },
 };

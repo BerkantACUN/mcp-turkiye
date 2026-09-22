@@ -1,8 +1,8 @@
 # mcp-turkiye
 
-**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, TCMB EVDS istatistikleri (enflasyon, faiz, 40 binden fazla seri), BIST günlük fiyatlar, AFAD deprem kataloğu, MGM hava durumu, akaryakıt fiyatları, İstanbul anlık trafik indeksi, İBB/İzmir/Konya/Gaziantep açık veri portalları, Resmî Gazete fihristi ve metinleri, mevzuat.gov.tr'de kanun/yönetmelik arama ve madde madde güncel metin, resmî tatiller, ÖSYM sınav takvimi, resmî parametreler (asgari ücret, SGK taban/tavan) ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
+**Türkiye'nin kamu verisi, tek MCP sunucusunda.** Claude, Cursor, VS Code, Codex ve MCP konuşan her asistan için: TCMB döviz kurları, TCMB EVDS istatistikleri (enflasyon, faiz, 40 binden fazla seri), BIST günlük fiyatlar, kripto TL fiyatları, AFAD ve Kandilli deprem katalogları, MGM hava durumu ve uyarıları, akaryakıt fiyatları, İstanbul anlık trafik indeksi, nöbetçi eczaneler (İstanbul, İzmir), İSPARK otopark doluluğu, İstanbul hava kalitesi, Metro İstanbul hat/istasyon/duyuruları, İzmir ESHOT canlı otobüs ve hal fiyatları, İBB/İzmir/Konya/Gaziantep açık veri portalları, Resmî Gazete fihristi ve metinleri, mevzuat.gov.tr'de kanun/yönetmelik arama ve madde madde güncel metin, resmî tatiller, ÖSYM sınav takvimi, resmî parametreler (asgari ücret, SGK taban/tavan), 81 il ve 973 ilçenin nüfus/yüzölçümü/plaka bilgisi, AA ve TRT haber başlıkları ve TCKN / VKN / IBAN biçim doğrulama — her yanıt kaynağı ve alınma zamanıyla birlikte.
 
-*Turkey's public data as one MCP server: central-bank FX rates, the central bank's EVDS statistics service (inflation, rates, 40,000+ series), Borsa İstanbul daily prices, the national earthquake catalogue, state weather service observations and forecasts, district-level fuel prices, Istanbul's live traffic index, the Istanbul, İzmir, Konya and Gaziantep open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, consolidated legislation search and article-level text from mevzuat.gov.tr, public holidays, the national exam calendar, official annual figures (minimum wage, social-security floor/ceiling) and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
+*Turkey's public data as one MCP server: central-bank FX rates, the central bank's EVDS statistics service (inflation, rates, 40,000+ series), Borsa İstanbul daily prices, crypto prices in lira, the national and Kandilli earthquake catalogues, state weather service observations, forecasts and warnings, district-level fuel prices, Istanbul's live traffic index, on-duty pharmacies (Istanbul, İzmir), İSPARK car-park occupancy, Istanbul air quality, Istanbul metro lines/stations/announcements, İzmir live buses and wholesale food prices, the Istanbul, İzmir, Konya and Gaziantep open-data portals (search, datasets, DataStore rows), the Official Gazette's daily index and article texts, consolidated legislation search and article-level text from mevzuat.gov.tr, public holidays, the national exam calendar, official annual figures (minimum wage, social-security floor/ceiling), province and district profiles, AA/TRT headlines and offline ID/tax/IBAN checksum validation. Every answer carries its source and fetch time.*
 
 [![CI](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml/badge.svg)](https://github.com/BerkantACUN/mcp-turkiye/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mcp-turkiye)](https://www.npmjs.com/package/mcp-turkiye)
@@ -74,12 +74,22 @@ Sonra asistanınıza Türkçe sorun:
 | `evds_seri` | Bir ya da birkaç serinin gözlemleri; formül (yıllık % değişim vb.), frekans ve toplama seçenekleri | TCMB EVDS* |
 | `evds_gosterge` | Başlıca göstergeler kod bilmeden, adıyla: yıllık/aylık enflasyon, ÜFE, politika faizi, dolar/euro/sterlin, konut fiyat endeksi, reel efektif kur; son değer ve tarih | TCMB EVDS* |
 | `bist_hisse` | Bir hissenin gün sonu fiyat geçmişi (kapanış, AOF, min/max, hacim, piyasa değeri) + aynı günün BIST 100 ve USD/TRY'si | İş Yatırım |
+| `btcturk_kripto` | Kripto varlıkların anlık TL (ya da USDT) fiyatı: son, alış/satış, günlük değişim, hacim; sembol listesi ya da hacme göre ilk 30 | BtcTurk |
 | `afad_depremler` | Tarih aralığı, en küçük büyüklük ve limitle deprem listesi; yeniden eskiye | AFAD |
 | `kandilli_depremler` | Kandilli Rasathanesi'nin son depremleri — AFAD'dan bağımsız ikinci katalog; ML/Mw/MD, ilksel/revize | Kandilli |
 | `mgm_hava_durumu` | İl/ilçe için anlık gözlem (sıcaklık, hissedilen, nem, rüzgâr, basınç, hadise) + 5 günlük tahmin | MGM |
 | `mgm_uyarilar` | Yürürlükteki meteorolojik uyarılar (kuvvetli yağış, fırtına, kar…) tam metniyle; `il` ile süz | MGM |
 | `opet_akaryakit` | İlçe bazında benzin/motorin/gazyağı/fuel oil pompa fiyatları; İstanbul iki yaka | Opet |
-| `ibb_trafik_indeksi` | İstanbul geneli anlık trafik yoğunluğu (0–100), her çağrıda taze | İBB UYM |
+| `ibb_trafik_indeksi` | İstanbul geneli anlık trafik yoğunluğu (0–100), her çağrıda taze | İBB |
+| `ibb_nobetci_eczane` | İstanbul'da bugün nöbetçi eczaneler: ad, ilçe, adres, telefon, konum; `ilce` ile süz | İBB |
+| `ibb_otopark` | İSPARK otoparkları anlık boş yer/doluluk; ilçe, ad ya da koordinata göre en yakından | İBB |
+| `ibb_otopark_detay` | Bir İSPARK otoparkının tarifesi, adresi, aylık abonelik ücreti | İBB |
+| `ibb_hava_kalitesi` | 28 istasyonda AQI, baskın kirletici, PM10/SO2/O3/NO2/CO; tek istasyon için 24 saatlik seri | İBB |
+| `ibb_metro` | Metro İstanbul hatları (ilk/son sefer) ve bir hattın sıralı istasyonları (asansör, tuvalet…) | İBB |
+| `ibb_metro_duyurular` | Metro İstanbul yolcu duyuruları: arıza, sefer düzenlemesi, kapalı istasyon | İBB |
+| `izmir_nobetci_eczane` | İzmir'de bugün nöbetçi eczaneler, bölgeye göre | İzmir BB |
+| `izmir_hal_fiyatlari` | İzmir toptancı hali günlük sebze-meyve / balık fiyatları (asgari, azami, ortalama) | İzmir BB |
+| `izmir_otobus` | Bir ESHOT durağına yaklaşan otobüsler, canlı: hat, kalan durak, konum | İzmir BB |
 | `acikveri_ara` | İBB, İzmir, Konya ya da Gaziantep açık veri portalında veri seti arama | 4 belediye |
 | `acikveri_veriseti` | Veri seti ayrıntısı: lisans, dosyalar, indirme bağlantıları, tablo servisi var mı | 4 belediye |
 | `acikveri_kayitlar` | Tablo servisi açık kaynağın sütun ve satırları (DataStore), sayfalama ve metin filtresi | 4 belediye |
@@ -92,10 +102,14 @@ Sonra asistanınıza Türkçe sorun:
 | `tatil_mi` | Bir tarih hafta sonu mu, tatil mi, iş günü mü | yok |
 | `osym_sinav_takvimi` | ÖSYM takvimi: YKS, KPSS, ALES, YDS, DGS, TUS… başvuru, sınav, sonuç, tercih tarihleri; varsayılan yalnızca gelecek | ÖSYM |
 | `resmi_parametreler` | Yılın resmî sayıları, kaynağıyla: asgari ücret (günlük/aylık brüt, net), SGK prime esas kazanç taban/tavan | yok |
+| `il_bilgisi` | Bir ilin nüfusu, yüzölçümü, rakımı, plaka ve alan kodları, bölgesi, nüfusa göre ilçeleri | yok |
+| `ilce_ara` | İlçe adından il, nüfus, yüzölçümü; aynı adlı ilçelerin hepsi | yok |
+| `iller_listesi` | 81 il nüfusa/yüzölçümüne/plakaya göre sıralı, bölgeye göre süzülmüş | yok |
 | `dogrula_tckn` | T.C. Kimlik Numarası kontrol basamakları | yok |
 | `dogrula_vkn` | Vergi Kimlik Numarası kontrol basamağı | yok |
 | `dogrula_iban` | TR IBAN mod-97 kontrolü + banka kodu | yok |
 | `plaka_il` | Plaka kodu ↔ il, 81 il | yok |
+| `haber_basliklari` | AA ya da TRT Haber son haberleri: başlık, özet, bağlantı, zaman; kategori ve arama süzgeci | AA, TRT |
 
 \* EVDS araçları ücretsiz bir kişisel anahtar ister — bkz. [TCMB EVDS anahtarı](#tcmb-evds-anahtarı). Anahtar yoksa bu beş araç nereden alınacağını söyleyen bir hata döner, diğerleri etkilenmez.
 
@@ -157,7 +171,7 @@ Anahtar yalnızca EVDS isteklerinin `key` başlığında kullanılır; hiçbir y
 
 ## Yol haritası
 
-Sonraki kaynaklar, KAP bildirimleri, Diyanet vakitleri (resmî API anahtarıyla). Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
+Sonraki adaylar: İETT hat/durak/sefer (SOAP), Ankara/İzmir baraj doluluk, TFF puan durumu, EPDK elektrik tarifeleri, GİB vergi takvimi. Diyanet namaz vakitleri resmî API anahtarı gerektirdiğinden beklemede. Bir kaynak eklemek bir klasör eklemektir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Geliştirme
 
@@ -170,7 +184,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Thirty tools today: central-bank FX bulletins (all currencies or one, today or any past date), the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change, plus headline indicators by name — inflation, PPI, policy rate, FX, house-price index, real effective exchange rate; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries plus Kandilli Observatory's independent list, MGM current conditions and 5-day forecasts for any province or district and its active severe-weather warnings, Opet fuel pump prices per district, Istanbul's live traffic index, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, ÖSYM's national exam calendar (university entrance, civil-service, graduate and language exams), official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Forty-six tools today: central-bank FX bulletins (all currencies or one, today or any past date), live crypto prices in lira from BtcTurk, the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change, plus headline indicators by name — inflation, PPI, policy rate, FX, house-price index, real effective exchange rate; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries plus Kandilli Observatory's independent list, MGM current conditions and 5-day forecasts for any province or district and its active severe-weather warnings, Opet fuel pump prices per district, Istanbul's live traffic index, today's on-duty pharmacies in Istanbul and İzmir, live İSPARK car-park occupancy (nearest-first by coordinate), Istanbul air-quality stations with AQI and pollutant readings, Istanbul metro lines, stations and service announcements, İzmir's live ESHOT buses and daily wholesale produce/fish prices, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, ÖSYM's national exam calendar (university entrance, civil-service, graduate and language exams), official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), offline province and district profiles (population, area, plate and area codes, regions), latest headlines from AA and TRT by category, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 

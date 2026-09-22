@@ -1,0 +1,132 @@
+{
+ "Success": true,
+ "Error": null,
+ "Data": [
+  {
+   "Id": 4,
+   "Name": "F1",
+   "Content": "<p>İstanbul şehir i&ccedil;i ulaşımında entegrasyonu sağlamak ve ulaşım s&uuml;relerini kısaltabilmek i&ccedil;in pek &c",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "F1 ISLETME",
+   "LongDescription": "Taksim-Kabataş Füniküler Hattı",
+   "ENDescription": "Taksim - Kabatas Funicular Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-F01",
+   "Color": {
+    "Color_R": "124",
+    "Color_G": "115",
+    "Color_B": "88"
+   },
+   "Order": 17,
+   "FirstTime": "06:00",
+   "LastTime": "00:00"
+  },
+  {
+   "Id": 20,
+   "Name": "F4",
+   "Content": "<p>Rumeli Hisar&uuml;st&uuml; b&ouml;lgesi ile boğaz sahilinde yer alan Aşiyan Parkı arasında inşa edilen F4 Boğazi&cced",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "F4 ISLETME",
+   "LongDescription": "Boğaziçi Üniversitesi | Hisarüstü-Aşiyan Füniküler Hattı",
+   "ENDescription": "Bogazici University | Hisarustu-Asiyan Funicular Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-F04",
+   "Color": {
+    "Color_R": "124",
+    "Color_G": "115",
+    "Color_B": "88"
+   },
+   "Order": 18,
+   "FirstTime": "06:00",
+   "LastTime": "00:00"
+  },
+  {
+   "Id": 9,
+   "Name": "M1A",
+   "Content": "<p>M1A Yenikapı - Atat&uuml;rk Havalimanı, Metro İstanbul&rsquo;un ilk raylı sistem işletmesidir. M1 işletmesinin ilk b&",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "M1A ISLETME",
+   "LongDescription": "Yenikapı-Atatürk Havalimanı Metro Hattı",
+   "ENDescription": "Yenikapi-Ataturk Airport Metro Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-M1A",
+   "Color": {
+    "Color_R": "238",
+    "Color_G": "49",
+    "Color_B": "36"
+   },
+   "Order": 1,
+   "FirstTime": "05:50",
+   "LastTime": "00:00"
+  },
+  {
+   "Id": 10,
+   "Name": "M1B",
+   "Content": "<p>M1B işletmesi, Yenikapı ile Otogar istasyonları arasında M1A hattı ile ortak yapılmaktadır. Otogar İstasyonu&rsquo;nd",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "M1B ISLETME",
+   "LongDescription": "Yenikapı-Kirazlı Metro Hattı",
+   "ENDescription": "Yenikapi-Kirazli Metro Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-M1B",
+   "Color": {
+    "Color_R": "238",
+    "Color_G": "49",
+    "Color_B": "36"
+   },
+   "Order": 2,
+   "FirstTime": "06:00",
+   "LastTime": "00:03"
+  },
+  {
+   "Id": 1,
+   "Name": "M2",
+   "Content": "<p>Seyrantepe y&ouml;n&uuml;ne gidecek yolcularımızın Sanayi Mahallesi istasyonundan aktarma yapmaları gerekmektedir!</p",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "M2 ISLETME",
+   "LongDescription": "Yenikapı-Seyrantepe-Hacıosman Metro Hattı",
+   "ENDescription": "Yenikapi-Seyrantepe-Haciosman Metro Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-M02",
+   "Color": {
+    "Color_R": "0",
+    "Color_G": "153",
+    "Color_B": "68"
+   },
+   "Order": 3,
+   "FirstTime": "05:57",
+   "LastTime": "00:00"
+  },
+  {
+   "Id": 2,
+   "Name": "M3",
+   "Content": "<p>Bakırk&ouml;y Sahil ve Kayaşehir Merkez istasyonları arasında hizmet veren 26,7 km uzunluğundaki hattın 20 istasyonu ",
+   "ENContent": "",
+   "ARContent": "",
+   "ShortDescription": "M3 ISLETME",
+   "LongDescription": "Bakırköy-Kayaşehir Metro Hattı",
+   "ENDescription": "Bakirkoy-Kayasehir Metro Line",
+   "ARDescription": "",
+   "IsActive": true,
+   "FunctionalCode": "M-M03",
+   "Color": {
+    "Color_R": "0",
+    "Color_G": "168",
+    "Color_B": "225"
+   },
+   "Order": 4,
+   "FirstTime": "06:00",
+   "LastTime": "00:00"
+  }
+ ]
+}

@@ -1,0 +1,170 @@
+[
+ {
+  "Id": "6b7a9840-1e13-4045-a79d-0f881c4852ad",
+  "Name": "Maslak",
+  "Adress": "İstanbul / Sarıyer - Turkey",
+  "Location": "POINT (29.024512004171349 41.100072371412381)"
+ },
+ {
+  "Id": "914b525e-f275-41e1-b45b-118ada8f08c3",
+  "Name": "Esenler",
+  "Adress": "İstanbul / Esenler - Turkey",
+  "Location": "POINT (28.888071049660041 41.036871407562813)"
+ },
+ {
+  "Id": "6929a9ca-977d-4cb3-b1b5-26b95f4d4515",
+  "Name": "Yenibosna",
+  "Adress": "İstanbul / Bahçelievler - Turkey",
+  "Location": "POINT (28.82703188207584 40.997387017164129)"
+ },
+ {
+  "Id": "41f90c1f-570d-46cd-9beb-493d9162639a",
+  "Name": "Beylikdüzü",
+  "Adress": "İstanbul - Beylikdüzü",
+  "Location": "POINT (28.612769803421966 40.971651116893213)"
+ },
+ {
+  "Id": "377e1216-bcc7-42c0-aad8-4d5b3d602b78",
+  "Name": "Ümraniye 1",
+  "Adress": "İstanbul / Ümraniye - Turkey",
+  "Location": "POINT (29.161812932369855 41.0126908139832)"
+ },
+ {
+  "Id": "cb4cd1c2-b55b-484f-ac7a-505369405d00",
+  "Name": "Aksaray",
+  "Adress": "İstanbul / Fatih - Turkey",
+  "Location": "POINT (28.953951591074674 41.014416544618882)"
+ },
+ {
+  "Id": "8c4004c6-3526-49fd-82d6-6be1c5b55ce6",
+  "Name": "Mobil",
+  "Adress": "İBB HAKİM",
+  "Location": "POINT (28.94542389771528 41.05794468638959)"
+ },
+ {
+  "Id": "179cd958-11aa-4e7a-8fa4-6eb2c852c2f6",
+  "Name": "Beşiktaş",
+  "Adress": "İstanbul / Beşiktaş - Turkey",
+  "Location": "POINT (29.009400707960992 41.05201253987974)"
+ },
+ {
+  "Id": "ecafeb15-905e-4257-a25a-72accf287e2a",
+  "Name": "Kadıköy",
+  "Adress": "İstanbul / Kadıköy - Turkey",
+  "Location": "POINT (29.033376300740208 40.990816663897334)"
+ },
+ {
+  "Id": "593780cc-69d7-417c-8089-8672c509bc0b",
+  "Name": "Sultangazi 1",
+  "Adress": "İstanbul / Sultangazi - Turkey",
+  "Location": "POINT (28.894342593837269 41.109144231314389)"
+ },
+ {
+  "Id": "4c41948b-232e-472c-ada9-8f4d575c56ac",
+  "Name": "Avcılar",
+  "Adress": "İstanbul / Avcılar - Turkey",
+  "Location": "POINT (28.730426314650934 40.987270015847)"
+ },
+ {
+  "Id": "aa68d3ab-2188-4821-869d-a528b61a05c6",
+  "Name": "Sultangazi 3",
+  "Adress": "İstanbul / Sultangazi - Turkey",
+  "Location": "POINT (28.851942029952141 41.114416266151864)"
+ },
+ {
+  "Id": "a30101a6-349c-4f0d-b965-a68f2c6781e9",
+  "Name": "Üsküdar 1",
+  "Adress": "İstanbul / Üsküdar - Turkey",
+  "Location": "POINT (29.024689534306511 41.014262285219615)"
+ },
+ {
+  "Id": "06cf354f-c56f-4375-a6c5-bb3d5e7d649e",
+  "Name": "Alibeyköy",
+  "Adress": "İstanbul / Kağıthane - Turkey",
+  "Location": "POINT (28.946119414907603 41.057383815140753)"
+ },
+ {
+  "Id": "2054f684-6a42-438f-ae03-bb90445e71e6",
+  "Name": "Selimiye",
+  "Adress": "İstanbul / Üsküdar - Turkey",
+  "Location": "POINT (29.027002050799894 41.003764972742829)"
+ },
+ {
+  "Id": "08fa75a5-277b-4562-bf51-be549c9a25a2",
+  "Name": "D-100 ",
+  "Adress": "İstanbul / Kadıköy - Turkey",
+  "Location": "POINT (29.070213248336952 40.993366938168037)"
+ },
+ {
+  "Id": "2f8ab9f0-eb04-4d62-bf67-d165cb015035",
+  "Name": "Kağıthane 1",
+  "Adress": "İstanbul / Kağıthane - Turkey",
+  "Location": "POINT (28.970788294140139 41.078506538289247)"
+ },
+ {
+  "Id": "61c3752d-2ff9-4d46-bc84-d7f303fa92e0",
+  "Name": "Kandilli 1",
+  "Adress": "İstanbul / Üsküdar - Turkey",
+  "Location": "POINT (29.058244796302752 41.062480929188695)"
+ },
+ {
+  "Id": "9e389c7a-45bd-440a-ba2f-db9c60c65a82",
+  "Name": "Kartal",
+  "Adress": "İstanbul / Pendik - Turkey",
+  "Location": "POINT (29.183055082864392 40.911042608528476)"
+ },
+ {
+  "Id": "b9709aaf-454d-4e41-af8c-ddc4302b1014",
+  "Name": "Çatladıkapı",
+  "Adress": "İstanbul / Fatih - Turkey",
+  "Location": "POINT (28.975120812056016 41.002338925787882)"
+ },
+ {
+  "Id": "3cb2525d-15e6-48b7-84d2-df139b14e991",
+  "Name": "Sultangazi 2",
+  "Adress": "İstanbul / Sultangazi - Turkey",
+  "Location": "POINT (28.874375565063755 41.1077392118589)"
+ },
+ {
+  "Id": "870840e9-b4fb-43e2-b4fa-e62d59703c88",
+  "Name": "Bağcılar",
+  "Adress": "Bağcılar İstanbul",
+  "Location": "POINT (28.842945678083513 41.032751735325576)"
+ },
+ {
+  "Id": "8cff7d4d-a5be-4e74-93ff-e75437639604",
+  "Name": "Kumköy",
+  "Adress": "İstanbul / Sarıyer - Turkey",
+  "Location": "POINT (29.038287457779013 41.2504374002923)"
+ },
+ {
+  "Id": "ed81dc69-345a-479d-8b9b-e82db11b276e",
+  "Name": "Sarıyer",
+  "Adress": "İstanbul / Sarıyer - Turkey",
+  "Location": "POINT (29.048490937004679 41.12792564762961)"
+ },
+ {
+  "Id": "d6838e88-162e-4394-bd3c-efb9de513ac6",
+  "Name": "Büyükada",
+  "Adress": "İstanbul / Adalar - Turkey",
+  "Location": "POINT (29.11804667155446 40.852148295713505)"
+ },
+ {
+  "Id": "0f56c66b-4ef0-40f2-a2cb-fbfeca020a94",
+  "Name": "Sancaktepe",
+  "Adress": "Sancaktepe İstanbul ",
+  "Location": "POINT (29.225944793115215 41.003229531728095)"
+ },
+ {
+  "Id": "476aac30-cec4-4dc3-b180-fc1522d8a37c",
+  "Name": "Arnavutköy",
+  "Adress": "İstanbul - Arnavutköy",
+  "Location": "POINT (28.707560514819338 41.220920943123048)"
+ },
+ {
+  "Id": "30a7a252-f4ea-43f8-a8db-fdea5ca332d3",
+  "Name": "Tuzla",
+  "Adress": "İstanbul - Tuzla",
+  "Location": "POINT (29.302621843152615 40.843121743887025)"
+ }
+]

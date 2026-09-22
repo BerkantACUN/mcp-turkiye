@@ -54,12 +54,46 @@ Kural: bir kaynak buraya girmeden sunucuya girmez.
 - **Şart:** Fiyatlar Opet'in kamuya duyurduğu kendi pompa fiyatlarıdır; tek dağıtıcıyı temsil eder, sektör ortalaması değildir — yanıtlar bunu söyler. Resmî API sözleşmesi yoktur; haftalık sözleşme testi biçimi izler. Opet talep ederse kaynak kaldırılır.
 - **Davranış:** 30 dakika önbellek. İlçe filtresi büyük/küçük harf ve Türkçe karakterden bağımsız.
 
-## ibb — İBB Ulaşım Yönetim Merkezi (trafik indeksi)
+## ibb — İstanbul Büyükşehir Belediyesi (İBB)
 
-- **Veri:** İstanbul geneli anlık trafik yoğunluk indeksi (0–100).
-- **Uç nokta:** `https://tkmservices.ibb.gov.tr/web/api/TrafficData/v1/TrafficIndex` — İBB trafik haritasının (uym.ibb.gov.tr) kullandığı açık uç nokta; `{"Result": 76}` biçiminde tek sayı.
-- **Şart:** İBB'nin kamuya sunduğu anlık gösterge; kaynak belirtilerek kullanılır. Resmî API sözleşmesi yoktur.
-- **Davranış:** 60 saniye önbellek (anlık veridir; sınır yalnızca kurumu korumak içindir). 0–100 dışı ya da sayı olmayan yanıt biçim hatası olarak bildirilir.
+Beş servis, iki ayrı dayanak:
+
+**İBB Açık Veri Portalı'nda ilanlı web servisleri** (`data.ibb.gov.tr`, "Istanbul Metropolitan Municipality Open Data License"):
+
+- **İSPARK** — `https://api.ibb.gov.tr/ispark/Park` (tüm otoparklar: kapasite, boş yer, açık/kapalı, çalışma saati, ücretsiz süre, konum) ve `…/ParkDetay?id=` (adres, tarife, aylık abonelik). Portal kaydı: "Ispark Parking List Web Service", "İSPARK Otopark Detay Bilgileri Web Servisi". Liste 2 dakika önbellekte; uzaklık, verilen koordinata büyük daire (haversine) mesafesidir; `areaPolygon` alanı yanıta konmaz.
+- **Hava kalitesi** — `https://api.ibb.gov.tr/havakalitesi/OpenDataPortalHandler/GetAQIStations` (28 istasyon) ve `GetAQIByStationId?StationId=&StartDate=&EndDate=` (saatlik PM10/SO2/O3/NO2/CO derişimi ve alt endeksleri, AQI, İBB'nin durum metni ve rengi). Portal kaydı: "Hava Kalitesi İstasyon Bilgileri/Ölçüm Sonuçları Web Servisi". Servis saat başına hizalı kova döndürür; sunucu pencereyi saat başına yuvarlar (son 25 saat), istasyon listesi 24 saat, ölçümler 10 dakika önbellekte. Ölçümü olmayan saatler null'dur, tahmin edilmez.
+- **Metro İstanbul** — `https://api.ibb.gov.tr/MetroIstanbul/api/MetroMobile/V2/GetLines`, `V2/GetStations`, `V3/GetAnnouncementsWithoutHtml/tr`. Portal kaydı: "Metro Istanbul Line Information List", "Metro İstanbul İstasyon Bilgi Listesi", "Metro Istanbul Timetable Web Service". Hat/istasyon 6 saat, duyurular 5 dakika önbellekte; ilk/son sefer saatleri operatörün yayımladığı değerlerdir, değişebilir.
+
+**İBB'nin kendi harita sitelerinin açık uç noktaları** (portalda ayrı ilan yok; kaynak belirtilerek, kurum talep ederse kaldırılır):
+
+- **Trafik indeksi** — `https://tkmservices.ibb.gov.tr/web/api/TrafficData/v1/TrafficIndex` (uym.ibb.gov.tr'nin kullandığı uç nokta, `{"Result": 76}`). 60 saniye önbellek; 0–100 dışı yanıt biçim hatasıdır.
+- **Nöbetçi eczane** — `https://cbsproxy.ibb.gov.tr/?eczanews&ilceID=all` (İBB Şehir Haritası'nın nöbetçi eczane katmanı: ad, adres, telefon, ilçe, konum). 30 dakika önbellek. Eczane bilgileri il sağlık müdürlüğü/eczacı odası kaynaklıdır; gitmeden önce telefonla teyit önerilir, yanıt alınma zamanını taşır.
+
+## izmir — İzmir Büyükşehir Belediyesi açık veri API (openapi.izmir.bel.tr)
+
+- **Veri:** Nöbetçi eczaneler (`/api/ibb/nobetcieczaneler`: ad, bölge, nöbet açıklaması, adres, telefon, konum); toptancı hal günlük fiyat bülteni (`/api/ibb/halfiyatlari/sebzemeyve/YYYY-AA-GG` ve `/balik/…`: ürün, tip, birim, asgari/azami/ortalama); ESHOT canlı otobüs (`/api/iztek/duragayaklasanotobusler/{durakId}`, `/api/iztek/hattinyaklasanotobusleri/{hatNo}/{durakId}`: kalan durak, konum, engelli erişimi, bisiklet aparatı).
+- **Şart:** Servisler İzmir Açık Veri Portalı'nda (`acikveri.bizizmir.com`) API biçimli veri seti olarak ilanlıdır; İzmir Büyükşehir Belediyesi Açık Veri Lisansı, kaynak belirtilerek kullanılır. Durak ve hat listeleri aynı portalın CKAN setlerindedir (`acikveri_ara` ile bulunur).
+- **Davranış:** Eczane 30 dakika, hal bülteni 1 saat, otobüs 30 saniye önbellekte. Bülten olmayan günde servis 204 döner; sunucu bunu boş liste ve `bultenTarihi=null` olarak verir, hata olarak değil. Koordinatlar servisten virgüllü gelir, noktaya çevrilir.
+
+## btcturk — BtcTurk kripto varlık piyasası
+
+- **Veri:** Anlık ticker: 180'den fazla TRY ve USDT çifti için son işlem, alış/satış, günlük açılış, en düşük/en yüksek, ortalama, 24 saatlik hacim ve değişim.
+- **Uç nokta:** `https://api.btcturk.com/api/v2/ticker` — BtcTurk'ün herkese açık (public) piyasa verisi ucu; anahtar istemez, hız sınırına tabidir.
+- **Şart:** Tek bir borsanın fiyatıdır; piyasa geneli ya da yatırım tavsiyesi değildir — yanıtlar bunu söyler. BtcTurk API kullanım şartlarına tabidir; kurum talep ederse kaynak kaldırılır.
+- **Davranış:** 30 saniye önbellek. `varlik` verilmezse TL cinsinden hacme (hacim × ortalama) göre ilk 30 çift.
+
+## haber — Haber başlıkları (Anadolu Ajansı, TRT Haber RSS)
+
+- **Veri:** Son haberlerin başlığı, kısa özeti, bağlantısı ve yayın zamanı; AA'da 11, TRT'de 12 kategori.
+- **Uç nokta:** `https://www.aa.com.tr/tr/rss/default?cat=<kategori>` ve `https://www.trthaber.com/<kategori>_articles.rss`.
+- **Şart:** Kurumların kamuya sunduğu RSS beslemeleri; yalnız başlık/özet/bağlantı/tarih aktarılır, haber metni indirilmez, içerik hakları yayıncıya aittir. Başlıklar yayıncının ifadesidir; sunucu yorum eklemez.
+- **Davranış:** 5 dakika önbellek. Ayrıştırma bağımlılıksızdır (RSS 2.0 `item` blokları, CDATA ve HTML varlıkları çözülür); besleme biçimi bozulursa biçim hatası döner.
+
+## iller — İl ve ilçe bilgileri (gömülü)
+
+- **Veri:** 81 il (nüfus, yüzölçümü, rakım, telefon alan kodları, kıyı/büyükşehir, coğrafi bölge, koordinat, ilçe/mahalle/köy sayıları) ve 973 ilçe (nüfus, yüzölçümü).
+- **Kaynak:** [ubeydeozdmr/turkiye-api](https://github.com/ubeydeozdmr/turkiye-api) veri setleri (MIT lisansı; nüfus TÜİK Adrese Dayalı Nüfus Kayıt Sistemi'nden). `scripts/iller-veri.mjs` veriyi indirip `src/sources/iller/veri.ts` olarak gömer; alınma tarihi her yanıtta `veriTarihi` alanındadır.
+- **Davranış:** Ağ erişimi yok. Yıllık TÜİK açıklamasından sonra betik yeniden çalıştırılır.
 
 ## acikveri — Belediye açık veri portalları (CKAN)
 

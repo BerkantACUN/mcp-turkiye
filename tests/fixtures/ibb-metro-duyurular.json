@@ -1,0 +1,18 @@
+{
+ "Success": true,
+ "Error": null,
+ "Data": [
+  {
+   "Icon": "https://www.metro.istanbul/Content/assets/img/tarihce-icon.png",
+   "Id": 695,
+   "Title": "M7 Yıldız-Mahmutbey Metro Hattı Gece Metrosu Sefer Düzenlemesi",
+   "Content": "Sayın yolcularımız,  M7 Yıldız-Mahmutbey Metro Hattı'nın Mecidiyeköy İstasyonu'nda devam eden onarım çalışmaları nedeniyle, 25 Temmuz Cumartesi günü itibarıyla hattımızda Gece Metrosu hizmeti verilemeyecektir.  Çalışmalar tamamlanıncaya kadar hat güzergâhında Gece Metrosu seferleri İETT otobüsleri ile yapılacaktır.  Anlayışınız için teşekkür ederiz. ",
+   "StartDate": "2026-07-27T00:01:00.000",
+   "Photo": "https://www.metro.istanbul/Content/assets/uploaded/ca14e5dd-58fc-4418-bab8-9c01ec1641c7.jpg",
+   "Media": {
+    "Video": null,
+    "Images": []
+   }
+  }
+ ]
+}

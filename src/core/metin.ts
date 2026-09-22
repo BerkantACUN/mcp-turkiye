@@ -28,3 +28,19 @@ export function duzMetin(html: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 }
+
+export function sadelestir(s: string): string {
+  return s
+    .trim()
+    .replace(/İ/g, 'i')
+    .replace(/I/g, 'ı')
+    .toLowerCase()
+    .replace(/[âîû]/g, (c) => ({ â: 'a', î: 'i', û: 'u' })[c] ?? c)
+    .replace(/ç/g, 'c')
+    .replace(/ğ/g, 'g')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ş/g, 's')
+    .replace(/ü/g, 'u')
+    .replace(/\s+/g, ' ');
+}

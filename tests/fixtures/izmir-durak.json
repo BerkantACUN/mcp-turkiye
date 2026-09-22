@@ -1,0 +1,35 @@
+[
+ {
+  "KalanDurakSayisi": 1,
+  "HattinYonu": 1,
+  "KoorY": "27,05394667",
+  "BisikletAparatliMi": false,
+  "KoorX": "38,51360667",
+  "EngelliMi": true,
+  "HatNumarasi": 816,
+  "HatAdi": "ÇİĞLİ HASTANE-EGEKENT AKTR.",
+  "OtobusId": 11734
+ },
+ {
+  "KalanDurakSayisi": 5,
+  "HattinYonu": 1,
+  "KoorY": "27,05092333",
+  "BisikletAparatliMi": false,
+  "KoorX": "38,51368833",
+  "EngelliMi": true,
+  "HatNumarasi": 346,
+  "HatAdi": "EVKA.5 - EGEKENT AKT.MRK",
+  "OtobusId": 11890
+ },
+ {
+  "KalanDurakSayisi": 17,
+  "HattinYonu": 1,
+  "KoorY": "27,06523667",
+  "BisikletAparatliMi": false,
+  "KoorX": "38,51766",
+  "EngelliMi": true,
+  "HatNumarasi": 446,
+  "HatAdi": "EVKA.5 - BOSTANLI İSKELE",
+  "OtobusId": 12352
+ }
+]
