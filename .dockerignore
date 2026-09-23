@@ -1,0 +1,11 @@
+.git
+.github
+.env
+node_modules
+dist
+coverage
+tests
+examples
+scripts
+assets
+*.log
