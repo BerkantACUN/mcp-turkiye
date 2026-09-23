@@ -4,6 +4,10 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 ## [Unreleased]
 
+### Added
+
+- **Docker imajı:** `ghcr.io/berkantacun/mcp-turkiye` — stdio sunucusu değişmeden, mcp-proxy ile Streamable HTTP (`/mcp`, port 8080); `MCP_PROXY_API_KEY` verilince `X-API-Key` doğrulaması. İmaj root olmayan `node` kullanıcısıyla çalışır, her `v*` etiketinde GitHub Actions ile yayınlanır, PR'larda yalnızca derlenir. Azure Container Apps'te (Germany West Central) buluttan 17 araçla denendi: Konya açık veri portalı yurtdışı IP'leri reddettiği için hata döner, diğerleri çalışır.
+
 ## [0.8.0] — 2026-09-22
 
 Beş yeni kaynak, on altı yeni araç: yirmi bir kaynak, kırk altı araç. Hepsi anahtarsız; İBB ve İzmir servisleri belediyelerin açık veri portallarında ilanlı API'lerdir.
