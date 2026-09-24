@@ -15,13 +15,13 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts \
-  && npm install -g mcp-proxy@6.7.19 \
   && npm cache clean --force
 COPY --from=build /app/dist ./dist
 USER node
 EXPOSE 8080
-# mcp-proxy serves the unchanged stdio server over Streamable HTTP at /mcp and
-# reads MCP_PROXY_API_KEY from the environment. It binds "::" by default, which
-# fails with EAFNOSUPPORT on hosts without IPv6 (Azure Container Apps), so the
-# IPv4 wildcard is explicit.
-CMD ["mcp-proxy", "--host", "0.0.0.0", "--port", "8080", "--server", "stream", "--", "node", "dist/index.js"]
+# The built-in Streamable HTTP entry serves the unchanged server at /mcp
+# (stateless) and /health. It takes no arguments: PORT (8080), HOST (0.0.0.0 —
+# "::" fails on hosts without IPv6, e.g. Azure Container Apps),
+# MCP_TURKIYE_API_KEY (MCP_PROXY_API_KEY still accepted), MCP_TURKIYE_RATE_LIMIT
+# and TRUST_PROXY come from the environment.
+CMD ["node", "dist/http.js"]

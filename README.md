@@ -64,14 +64,26 @@ Sonra asistanınıza Türkçe sorun:
 
 ## Uzak sunucu (Docker)
 
-Her makineye kurmak yerine sunucuyu bir kez buluta koyup istemcileri URL ile bağlayabilirsiniz. Her sürümde imaj `ghcr.io/berkantacun/mcp-turkiye` adresine yayınlanır; stdio sunucusunu [mcp-proxy](https://github.com/punkpeye/mcp-proxy) değiştirmeden Streamable HTTP üzerinden `/mcp` yolunda sunar.
+Her makineye kurmak yerine sunucuyu bir kez buluta koyup istemcileri URL ile bağlayabilirsiniz. Her sürümde imaj `ghcr.io/berkantacun/mcp-turkiye` adresine yayınlanır; yerleşik Streamable HTTP giriş noktası (`dist/http.js`) aynı araçları ve aynı zarfı `/mcp` yolunda sunar. Durumsuzdur (oturum kimliği yok), bu yüzden birden çok kopya arkasında da çalışır.
 
 ```sh
-docker run -p 8080:8080 -e MCP_PROXY_API_KEY=<gizli-anahtar> ghcr.io/berkantacun/mcp-turkiye
+docker run -p 8080:8080 -e MCP_TURKIYE_API_KEY=<gizli-anahtar> ghcr.io/berkantacun/mcp-turkiye
 claude mcp add --transport http turkiye http://localhost:8080/mcp --header "X-API-Key: <gizli-anahtar>"
 ```
 
-- `MCP_PROXY_API_KEY` verilince her istek `X-API-Key` başlığı ister. Herkese açık bir uçta anahtarsız çalıştırmayın: sunucu sizin adınıza kamu kurumlarına istek atan açık bir vekil olur.
+Docker olmadan: `npm run build && PORT=8080 node dist/http.js`.
+
+| Ortam değişkeni | Varsayılan | Ne yapar |
+|---|---|---|
+| `PORT` | `8080` | Dinlenen port |
+| `HOST` | `0.0.0.0` | Dinlenen adres; IPv6 olmayan ortamlarda (Azure Container Apps) `::` çalışmaz |
+| `MCP_TURKIYE_API_KEY` | — | Verilince her `/mcp` isteği `X-API-Key` başlığı ister, yoksa `401`. Eski ad `MCP_PROXY_API_KEY` de geçerli |
+| `MCP_TURKIYE_RATE_LIMIT` | `60` | IP başına dakikadaki istek sınırı; aşılınca `429` ve `Retry-After`. `0` kapatır |
+| `TRUST_PROXY` | — | `1` iken istemci IP'si `X-Forwarded-For`'un en sağdaki girdisinden okunur; yalnızca güvenilir bir ters vekilin arkasında açın |
+
+- `GET /health` anahtarsız `200` döner ve hız sınırına sayılmaz; sağlık yoklaması için.
+- Herkese açık bir uçta anahtarsız çalıştırmayın: sunucu sizin adınıza kamu kurumlarına istek atan açık bir vekil olur.
+- Hız sınırı bellek içidir ve kopya başınadır; birden çok kopyada toplam sınır kopya sayısıyla çarpılır.
 - Konya açık veri portalı Türkiye dışındaki IP'leri reddeder; yurtdışı bölgedeki bir bulutta `acikveri_*` araçları Konya için hata döner, diğer kaynaklar çalışır (Azure Container Apps, Germany West Central'da denendi).
 
 ## Araçlar
@@ -196,7 +208,7 @@ npm run dev         # stdio üzerinden sunucuyu çalıştır
 
 ## English
 
-Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Forty-six tools today: central-bank FX bulletins (all currencies or one, today or any past date), live crypto prices in lira from BtcTurk, the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change, plus headline indicators by name — inflation, PPI, policy rate, FX, house-price index, real effective exchange rate; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries plus Kandilli Observatory's independent list, MGM current conditions and 5-day forecasts for any province or district and its active severe-weather warnings, Opet fuel pump prices per district, Istanbul's live traffic index, today's on-duty pharmacies in Istanbul and İzmir, live İSPARK car-park occupancy (nearest-first by coordinate), Istanbul air-quality stations with AQI and pollutant readings, Istanbul metro lines, stations and service announcements, İzmir's live ESHOT buses and daily wholesale produce/fish prices, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, ÖSYM's national exam calendar (university entrance, civil-service, graduate and language exams), official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), offline province and district profiles (population, area, plate and area codes, regions), latest headlines from AA and TRT by category, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. For remote hosting, the Docker image `ghcr.io/berkantacun/mcp-turkiye` serves the same server over Streamable HTTP at `/mcp`; set `MCP_PROXY_API_KEY` so every request needs an `X-API-Key` header. Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+Turkey's public data for AI agents, in one MCP server. Install with `npx -y mcp-turkiye` (Node 20+, no keys except for the optional EVDS tools). Forty-six tools today: central-bank FX bulletins (all currencies or one, today or any past date), live crypto prices in lira from BtcTurk, the central bank's EVDS statistics (topic tree, data groups, series and observations with formulas such as year-on-year change, plus headline indicators by name — inflation, PPI, policy rate, FX, house-price index, real effective exchange rate; needs a free `EVDS_API_KEY`), Borsa İstanbul daily price history, AFAD earthquake catalogue queries plus Kandilli Observatory's independent list, MGM current conditions and 5-day forecasts for any province or district and its active severe-weather warnings, Opet fuel pump prices per district, Istanbul's live traffic index, today's on-duty pharmacies in Istanbul and İzmir, live İSPARK car-park occupancy (nearest-first by coordinate), Istanbul air-quality stations with AQI and pollutant readings, Istanbul metro lines, stations and service announcements, İzmir's live ESHOT buses and daily wholesale produce/fish prices, CKAN open-data search/dataset/DataStore access for Istanbul, İzmir, Konya and Gaziantep, the Official Gazette's daily index and article text, legislation search plus consolidated full text and single-article lookup from mevzuat.gov.tr, public holidays with Diyanet's religious-holiday dates, business-day checks, ÖSYM's national exam calendar (university entrance, civil-service, graduate and language exams), official annual figures (minimum wage and social-security floor/ceiling, each with its Resmî Gazete issue or statute), offline province and district profiles (population, area, plate and area codes, regions), latest headlines from AA and TRT by category, and offline checksum validation of national ID numbers, tax numbers and IBANs plus province ↔ plate-code lookup. Every answer is an envelope with the source institution, the exact URL and the fetch time; a source that does not answer produces a tool error, never a guessed value. Tool descriptions are bilingual so English-speaking models use them correctly. For remote hosting, the Docker image `ghcr.io/berkantacun/mcp-turkiye` runs the built-in stateless Streamable HTTP entry (`node dist/http.js`) at `/mcp` with `/health`; set `MCP_TURKIYE_API_KEY` so every request needs an `X-API-Key` header, and requests are rate-limited per IP (60/min by default). Data licences: [SOURCES.md](SOURCES.md). Acceptable use: [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 ## Lisans
 
