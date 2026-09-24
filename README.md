@@ -71,7 +71,7 @@ docker run -p 8080:8080 -e MCP_TURKIYE_API_KEY=<gizli-anahtar> ghcr.io/berkantac
 claude mcp add --transport http turkiye http://localhost:8080/mcp --header "X-API-Key: <gizli-anahtar>"
 ```
 
-Docker olmadan: `npm run build && PORT=8080 node dist/http.js`.
+Docker olmadan: `npm run build && HOST=127.0.0.1 PORT=8080 node dist/http.js` (yerelde yalnızca kendi makinenizden erişilsin diye `127.0.0.1`).
 
 | Ortam değişkeni | Varsayılan | Ne yapar |
 |---|---|---|
@@ -80,8 +80,10 @@ Docker olmadan: `npm run build && PORT=8080 node dist/http.js`.
 | `MCP_TURKIYE_API_KEY` | — | Verilince her `/mcp` isteği `X-API-Key` başlığı ister, yoksa `401`. Eski ad `MCP_PROXY_API_KEY` de geçerli |
 | `MCP_TURKIYE_RATE_LIMIT` | `60` | IP başına dakikadaki istek sınırı; aşılınca `429` ve `Retry-After`. `0` kapatır |
 | `TRUST_PROXY` | — | `1` iken istemci IP'si `X-Forwarded-For`'un en sağdaki girdisinden okunur; yalnızca güvenilir bir ters vekilin arkasında açın |
+| `MCP_TURKIYE_ALLOWED_ORIGINS` | — | Tarayıcıdan çağırmasına izin verilen kaynaklar, virgülle (`*` hepsi). `Origin` başlığı taşıyan ve listede olmayan istek `403` alır; MCP istemcileri bu başlığı göndermez, tarayıcılar (DNS rebinding dahil) gönderir |
 
 - `GET /health` anahtarsız `200` döner ve hız sınırına sayılmaz; sağlık yoklaması için.
+- 1 MB'tan büyük istek gövdesi `413` alır; `SIGTERM`'de sunucu yeni bağlantı almayı bırakır, süren istekleri bitirir (en fazla 10 sn).
 - Herkese açık bir uçta anahtarsız çalıştırmayın: sunucu sizin adınıza kamu kurumlarına istek atan açık bir vekil olur.
 - Hız sınırı bellek içidir ve kopya başınadır; birden çok kopyada toplam sınır kopya sayısıyla çarpılır.
 - Konya açık veri portalı Türkiye dışındaki IP'leri reddeder; yurtdışı bölgedeki bir bulutta `acikveri_*` araçları Konya için hata döner, diğer kaynaklar çalışır (Azure Container Apps, Germany West Central'da denendi).

@@ -5,6 +5,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  AZAMI_GOVDE,
   HizSiniri,
   type HttpAyarlari,
   httpSunucusuOlustur,
@@ -71,7 +72,15 @@ describe('ortamdanAyarlar', () => {
       dakikaLimiti: 60,
       pencereMs: 60_000,
       proxyyeGuven: false,
+      izinliKaynaklar: [],
     });
+  });
+
+  it('reads the allowed browser origins as a comma list', () => {
+    expect(
+      ortamdanAyarlar({ MCP_TURKIYE_ALLOWED_ORIGINS: ' https://a.dev, ,https://b.dev ' })
+        .izinliKaynaklar,
+    ).toEqual(['https://a.dev', 'https://b.dev']);
   });
 
   it('reads PORT, HOST, the key, the limit and TRUST_PROXY', () => {
@@ -140,6 +149,15 @@ describe('HizSiniri', () => {
     const h = new HizSiniri(0, 60_000);
     for (let i = 0; i < 1000; i++) expect(h.kaydet('a')).toBe(0);
   });
+
+  it('caps the number of addresses between sweeps, evicting the oldest', () => {
+    const an = 0;
+    const h = new HizSiniri(5, 60_000, () => an, 3);
+    for (const ip of ['a', 'b', 'c', 'd', 'e']) h.kaydet(ip);
+    expect(h.boyut).toBe(3);
+    h.kaydet('e');
+    expect(h.boyut).toBe(3);
+  });
 });
 
 describe('istemciIp', () => {
@@ -184,11 +202,54 @@ describe('HTTP sunucusu', () => {
     expect((await fetch(`${taban}/sse`)).status).toBe(404);
   });
 
-  it('answers a CORS preflight', async () => {
-    const taban = await baslat({ apiAnahtari: 'gizli' });
-    const r = await fetch(`${taban}/mcp`, { method: 'OPTIONS' });
-    expect(r.status).toBe(204);
-    expect(r.headers.get('access-control-allow-headers')).toMatch(/X-API-Key/);
+  it('answers a CORS preflight only for an allowed origin', async () => {
+    const taban = await baslat({ apiAnahtari: 'gizli', izinliKaynaklar: ['https://izinli.dev'] });
+    const izinli = await fetch(`${taban}/mcp`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://izinli.dev' },
+    });
+    expect(izinli.status).toBe(204);
+    expect(izinli.headers.get('access-control-allow-origin')).toBe('https://izinli.dev');
+    expect(izinli.headers.get('access-control-allow-headers')).toMatch(/X-API-Key/);
+    const yabanci = await fetch(`${taban}/mcp`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://kotu.example' },
+    });
+    expect(yabanci.headers.get('access-control-allow-origin')).toBeNull();
+  });
+
+  it('refuses a browser origin that is not allowed, DNS rebinding included', async () => {
+    const taban = await baslat();
+    const r = await mcpPost(taban, { Origin: 'http://kotu.example:8080' });
+    expect(r.status).toBe(403);
+    expect(r.headers.get('access-control-allow-origin')).toBeNull();
+    expect((await mcpPost(taban)).status).toBe(200);
+  });
+
+  it('serves an allowed origin, or any origin with *', async () => {
+    const tek = await baslat({ izinliKaynaklar: ['https://izinli.dev'] });
+    const r = await mcpPost(tek, { Origin: 'https://izinli.dev' });
+    expect(r.status).toBe(200);
+    expect(r.headers.get('access-control-allow-origin')).toBe('https://izinli.dev');
+    sunucu?.closeAllConnections();
+    await new Promise((ok) => sunucu?.close(ok));
+    const herkes = await baslat({ izinliKaynaklar: ['*'] });
+    const h = await mcpPost(herkes, { Origin: 'https://baska.dev' });
+    expect(h.status).toBe(200);
+    expect(h.headers.get('access-control-allow-origin')).toBe('*');
+  });
+
+  it('answers 413 to a body larger than any tool call needs', async () => {
+    const taban = await baslat();
+    const r = await fetch(`${taban}/mcp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+      },
+      body: JSON.stringify({ ...BASLAT, dolgu: 'x'.repeat(AZAMI_GOVDE) }),
+    });
+    expect(r.status).toBe(413);
   });
 
   it('requires X-API-Key when a key is set: 401 without or with a wrong one', async () => {
