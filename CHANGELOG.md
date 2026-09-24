@@ -9,6 +9,8 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 - **Streamable HTTP giriş noktası:** `dist/http.js` (`src/http.ts`) — mcp-proxy'ye gerek kalmadan aynı `sunucuOlustur()` ile `/mcp` üzerinde durumsuz Streamable HTTP ve `GET /health`. Argüman almaz; `PORT` (8080), `HOST` (0.0.0.0), `MCP_TURKIYE_API_KEY` (verilince `X-API-Key` zorunlu, yoksa 401; eski `MCP_PROXY_API_KEY` de geçerli), `MCP_TURKIYE_RATE_LIMIT` (IP başına dakikada 60, aşılınca 429 + `Retry-After`) ve `TRUST_PROXY=1` (istemci IP'si `X-Forwarded-For`'dan) ortamdan okunur. Tarayıcı kaynakları varsayılan olarak kapalı: `Origin` taşıyan istek `MCP_TURKIYE_ALLOWED_ORIGINS` listesinde değilse `403` (DNS rebinding'e karşı), CORS başlıkları yalnızca izinli kaynağa. Hız sınırı tablosu 10.000 adresle sınırlı, 1 MB üstü gövde `413`, `SIGTERM`'de süren istekler bitirilir. Zarf (`kaynak`/`alindi`/`veri`) değişmedi.
 - **Docker imajı:** `ghcr.io/berkantacun/mcp-turkiye` — yerleşik HTTP giriş noktasını çalıştırır (`node dist/http.js`, port 8080); mcp-proxy imajdan kaldırıldı. İmaj root olmayan `node` kullanıcısıyla çalışır, her `v*` etiketinde GitHub Actions ile yayınlanır, PR'larda yalnızca derlenir. Azure Container Apps'te (Germany West Central) buluttan 17 araçla denendi: Konya açık veri portalı yurtdışı IP'leri reddettiği için hata döner, diğerleri çalışır.
 - **llms-install.md:** Cline gibi ajanların sunucuyu kendi başına kurabilmesi için yönerge: `mcpServers` girdisi, isteğe bağlı `EVDS_API_KEY`, çevrimdışı doğrulama çağrıları (`plaka_il`, `dogrula_tckn`) ve kendi barındırılan HTTP sunucusu için `streamableHttp` girdisi.
+- **README:** claude.ai / Claude Desktop'a uzak sunucu olarak bağlama bölümü: özel bağlayıcı ekleme adımları, `x-api-key` istek başlığı (beta), Anthropic çıkış aralığı ve paylaşılan hız sınırı. Herkese açık bir uç nokta yoktur.
+- **Cursor eklentisi:** `.cursor-plugin/plugin.json` — Cursor'ın eklenti manifesti (ad, açıklama, sürüm, logo, lisans); MCP yapılandırması kökteki `.mcp.json`. Sürümü `package.json` ile bir testle eşlenir.
 
 ### Changed
 
@@ -17,8 +19,6 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 ### Fixed
 
 - **README / 0.8.0 notu:** araç sayısı 46, kaynak sayısı 21 yazılmıştı; 0.8.0'da ve bugün sunucu 19 kaynaktan 44 araç kaydeder. README'nin İngilizce özeti düzeltildi; araç tablosunun kayıtlı araçlarla ve özetteki sayının gerçek sayıyla aynı olduğu artık bir testle denetlenir.
-- **README:** claude.ai / Claude Desktop'a uzak sunucu olarak bağlama bölümü: özel bağlayıcı ekleme adımları, `x-api-key` istek başlığı (beta), Anthropic çıkış aralığı ve paylaşılan hız sınırı. Herkese açık bir uç nokta yoktur.
-
 - **http:** `SIGTERM`/`SIGINT` sonrası biten bir isteğin keep-alive soketi boşta kalınca kapanma `keepAliveTimeout` kadar (5 sn) gecikiyordu; bekleme süresince boştaki soketler 100 ms'de bir kapatılıyor. Kapanma mantığı `kapanisiKur()` olarak `src/http-sunucu.ts`'e taşındı ve testlendi.
 
 ## [0.8.0] — 2026-09-22

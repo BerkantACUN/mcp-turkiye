@@ -1,0 +1,26 @@
+{
+  "name": "mcp-turkiye",
+  "displayName": "mcp-turkiye",
+  "version": "0.8.0",
+  "description": "Türkiye'nin kamu verisi tek MCP sunucusunda: TCMB kurları ve EVDS, mevzuat ve Resmî Gazete, AFAD/Kandilli deprem, MGM hava durumu, nöbetçi eczane, İSPARK, metro, hal fiyatları, resmî tatiller, TCKN/VKN/IBAN doğrulama. Turkey's public data as MCP tools, every answer with its source and fetch time.",
+  "author": {
+    "name": "Berkant Acun"
+  },
+  "homepage": "https://github.com/BerkantACUN/mcp-turkiye#readme",
+  "repository": "https://github.com/BerkantACUN/mcp-turkiye",
+  "license": "MIT",
+  "logo": "assets/icon.png",
+  "keywords": [
+    "mcp",
+    "turkey",
+    "türkiye",
+    "tcmb",
+    "evds",
+    "deprem",
+    "mevzuat",
+    "hava-durumu",
+    "acik-veri"
+  ],
+  "category": "integrations",
+  "mcpServers": "./.mcp.json"
+}
