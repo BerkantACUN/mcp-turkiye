@@ -70,3 +70,16 @@ jobs:
             echo "| $BASE_REF | $base |"
             echo "| this PR | $head |"
           } | tee -a "$GITHUB_STEP_SUMMARY"
+      # The image must also start: run it as built and wait for /health.
+      - if: github.event_name == 'pull_request'
+        name: smoke test (container answers /health)
+        run: |
+          docker run -d --name duman -p 8080:8080 boyut:head
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/health; then
+              echo; docker rm -f duman; exit 0
+            fi
+            sleep 1
+          done
+          docker logs duman
+          exit 1
