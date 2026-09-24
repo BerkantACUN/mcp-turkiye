@@ -9,6 +9,10 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 - **Streamable HTTP giriş noktası:** `dist/http.js` (`src/http.ts`) — mcp-proxy'ye gerek kalmadan aynı `sunucuOlustur()` ile `/mcp` üzerinde durumsuz Streamable HTTP ve `GET /health`. Argüman almaz; `PORT` (8080), `HOST` (0.0.0.0), `MCP_TURKIYE_API_KEY` (verilince `X-API-Key` zorunlu, yoksa 401; eski `MCP_PROXY_API_KEY` de geçerli), `MCP_TURKIYE_RATE_LIMIT` (IP başına dakikada 60, aşılınca 429 + `Retry-After`) ve `TRUST_PROXY=1` (istemci IP'si `X-Forwarded-For`'dan) ortamdan okunur. Tarayıcı kaynakları varsayılan olarak kapalı: `Origin` taşıyan istek `MCP_TURKIYE_ALLOWED_ORIGINS` listesinde değilse `403` (DNS rebinding'e karşı), CORS başlıkları yalnızca izinli kaynağa. Hız sınırı tablosu 10.000 adresle sınırlı, 1 MB üstü gövde `413`, `SIGTERM`'de süren istekler bitirilir. Zarf (`kaynak`/`alindi`/`veri`) değişmedi.
 - **Docker imajı:** `ghcr.io/berkantacun/mcp-turkiye` — yerleşik HTTP giriş noktasını çalıştırır (`node dist/http.js`, port 8080); mcp-proxy imajdan kaldırıldı. İmaj root olmayan `node` kullanıcısıyla çalışır, her `v*` etiketinde GitHub Actions ile yayınlanır, PR'larda yalnızca derlenir. Azure Container Apps'te (Germany West Central) buluttan 17 araçla denendi: Konya açık veri portalı yurtdışı IP'leri reddettiği için hata döner, diğerleri çalışır.
 
+### Changed
+
+- **Sunucu yönergesi (`instructions`):** kaynak listesi elle yazılmıştı ve EVDS, BtcTurk, Kandilli, ÖSYM, iller, haber başlıkları ile İBB/İzmir'in yeni servislerini saymıyordu; artık kayıtlı kaynakların adlarından üretilir, eksik kalamaz.
+
 ## [0.8.0] — 2026-09-22
 
 Beş yeni kaynak, on altı yeni araç: yirmi bir kaynak, kırk altı araç. Hepsi anahtarsız; İBB ve İzmir servisleri belediyelerin açık veri portallarında ilanlı API'lerdir.
