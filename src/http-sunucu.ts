@@ -252,3 +252,42 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
     }
   });
 }
+
+/** The part of `process` the shutdown needs, injectable for tests. */
+export type Surec = {
+  once(sinyal: 'SIGTERM' | 'SIGINT', dinleyici: () => void): unknown;
+  exit(kod: number): void;
+};
+
+/**
+ * Well under the platform's own grace period (Azure Container Apps waits 30 s
+ * before SIGKILL).
+ */
+export const KAPANMA_SURESI_MS = 10_000;
+
+/**
+ * Graceful stop on a revision change or scale-in: stop accepting, drop idle
+ * keep-alive sockets, let in-flight requests finish, and exit anyway once the
+ * grace period is over.
+ */
+export function kapanisiKur(
+  sunucu: Server,
+  surec: Surec = process,
+  sureMs = KAPANMA_SURESI_MS,
+): void {
+  for (const sinyal of ['SIGTERM', 'SIGINT'] as const) {
+    surec.once(sinyal, () => {
+      // A request that finishes during the wait leaves its keep-alive socket
+      // idle, and close() would then wait for keepAliveTimeout (5 s); sweep
+      // idle sockets until the last one is gone.
+      const supurge = setInterval(() => sunucu.closeIdleConnections(), 100);
+      supurge.unref();
+      sunucu.close(() => {
+        clearInterval(supurge);
+        surec.exit(0);
+      });
+      sunucu.closeIdleConnections();
+      setTimeout(() => surec.exit(0), sureMs).unref();
+    });
+  }
+}
