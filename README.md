@@ -90,6 +90,33 @@ Docker olmadan: `npm run build && HOST=127.0.0.1 PORT=8080 node dist/http.js` (y
 - Hız sınırı bellek içidir ve kopya başınadır; birden çok kopyada toplam sınır kopya sayısıyla çarpılır.
 - Konya açık veri portalı Türkiye dışındaki IP'leri reddeder; yurtdışı bölgedeki bir bulutta `acikveri_*` araçları Konya için hata döner, diğer kaynaklar çalışır (Azure Container Apps, Germany West Central'da denendi).
 
+### claude.ai / Claude Desktop'a uzak sunucu olarak bağlama
+
+Claude Desktop'ta tek makine için yukarıdaki yerel kurulum (`npx`) yeterlidir. Uzak bağlayıcı, sunucuyu claude.ai'de (web, mobil) ya da her makineye kurmadan kullanmak içindir. **Bu proje herkese açık bir uç nokta işletmez**; önce yukarıdaki imajla kendi sunucunuzu kurmanız gerekir.
+
+Önkoşullar ([Anthropic belgesi](https://claude.com/docs/connectors/custom/remote-mcp)):
+
+- Sunucu HTTPS ile genel internetten erişilebilir olmalı. Bağlantı sizin makinenizden değil, Anthropic'in sunucularından kurulur; Claude Desktop'ta da böyledir. Anthropic'in çıkış aralığı `160.79.104.0/21`'dir ([IP adresleri](https://platform.claude.com/docs/en/api/ip-addresses)); güvenlik duvarınızda bu aralığa izin verin.
+- Adres `https://<alan-adınız>/mcp` biçimindedir; aktarım Streamable HTTP'dir.
+
+Ekleme:
+
+- **Free, Pro, Max:** **Customize → Connectors → Add custom connector**, adı ve URL'yi girin.
+- **Team, Enterprise:** Sahip, **Organization settings → Connectors → Add → Custom → Web** ile ekler; üyeler **Customize → Connectors**'ta **Connect** der.
+- Sohbette **+ → Connectors** menüsünden bağlayıcıyı açıp kapatabilirsiniz.
+
+Anahtar (`MCP_TURKIYE_API_KEY`):
+
+- Ekleme penceresinde **Request headers** bölümü varsa: kimlik doğrulamada **No sign-in** seçin, başlık olarak listeden `x-api-key`'i seçip değere anahtarı olduğu gibi yazın. Bu özellik beta ve yalnızca bazı kuruluşlarda açık.
+- Bölüm yoksa Claude `X-API-Key` gönderemez ve anahtarlı sunucu her isteğe `401` döner. Anahtarı kapatmak sunucuyu açık bir vekile çevirir (yukarıdaki uyarı). Bu durumda Claude Desktop'ta yerel kurulumu kullanın. Anahtarsız çalıştırmaya karar verirseniz en azından güvenlik duvarında yalnızca `160.79.104.0/21`'e izin verin; bu aralık tüm Claude kullanıcılarının bağlayıcı trafiğidir, URL'yi bilen başka bir Claude kullanıcısı yine bağlanabilir.
+- Kimlik doğrulama ayarları eklendikten sonra değiştirilemez. Anahtarı değiştirdiğinizde bağlayıcıyı silip yeniden ekleyin.
+
+Bilmeniz gerekenler:
+
+- Claude'dan gelen bütün istekler Anthropic'in çıkış adreslerinden gelir, dolayısıyla IP başına hız sınırı bu adreslerde paylaşılır. Çok kullanıcılı bir kuruluşta `MCP_TURKIYE_RATE_LIMIT`'i yükseltmeniz gerekebilir. Sunucu bir ters vekilin arkasındaysa `TRUST_PROXY=1` verin, yoksa bütün istekler vekilin adresinden gelmiş sayılır.
+- claude.ai ve Desktop'ta bir araç çağrısı en fazla 240 saniye sürebilir, bir araç sonucu yaklaşık 150.000 karakterle sınırlıdır ([teknik sınırlar](https://claude.com/docs/connectors/building)).
+- Yalnızca kendi makinenizde çalışan (`127.0.0.1`, `localhost`) bir sunucu claude.ai'ye bağlanamaz: Anthropic'in sunucuları ona ulaşamaz. Claude Code ise bağlantıyı kendi makinenizden kurar; yerel sunucu için yukarıdaki `claude mcp add --transport http` komutunu kullanın.
+
 ## Araçlar
 
 | Araç | Ne yapar | Ağ |
