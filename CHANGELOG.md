@@ -26,6 +26,7 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 - **http:** 1 MB sınırı yalnızca `Content-Length` başlığına bakıyordu; başlıksız (`Transfer-Encoding: chunked`) bir gövde sınırsız okunup belleğe alınıyordu. Gövde artık sunucuda en fazla 1 MB okunur, aşan istek `413` alır ve bağlantı kapanır; bozuk JSON `400` (JSON-RPC `-32700`).
 - **http:** 1 MB sınırı yalnızca `Content-Length` başlığına bakıyordu; başlıksız (`Transfer-Encoding: chunked`) bir gövde sınırsız okunup belleğe alınıyordu. Gövde artık sunucuda okunur ve en fazla 1 MB'ı belleğe alınır; aşan kısım okunup atılır, istek `413` alır; bozuk JSON `400` (JSON-RPC `-32700`).
+- **Docker imajı:** `ghcr.io/berkantacun/mcp-turkiye` — yerleşik HTTP giriş noktasını çalıştırır (`node dist/http.js`, port 8080); mcp-proxy imajdan kaldırıldı. İmaj Alpine tabanlıdır, yalnızca üretim bağımlılıklarını ve `node`'u taşır (npm/npx/yarn/corepack çıkarıldı), `linux/amd64` ve `linux/arm64` için derlenir, root olmayan `node` kullanıcısıyla çalışır; her `v*` etiketinde GitHub Actions ile yayınlanır, PR'larda yalnızca derlenir. Azure Container Apps'te (Germany West Central) buluttan 17 araçla denendi: Konya açık veri portalı yurtdışı IP'leri reddettiği için hata döner, diğerleri çalışır.
 
 ## [0.8.0] — 2026-09-22
 

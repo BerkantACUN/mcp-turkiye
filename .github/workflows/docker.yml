@@ -25,6 +25,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v5
+      # arm64 is built under emulation on the amd64 runner.
+      - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v4
       - id: meta
         uses: docker/metadata-action@v6
@@ -43,8 +45,28 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      # Pull requests report the image size next to the base branch's, so a
+      # change that bloats the image shows up in the run summary.
+      - if: github.event_name == 'pull_request'
+        name: image size (amd64, base vs head)
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --depth=1 origin "$BASE_REF"
+          git worktree add /tmp/base FETCH_HEAD
+          docker buildx build --load --platform linux/amd64 -t boyut:base /tmp/base
+          docker buildx build --load --platform linux/amd64 -t boyut:head .
+          base=$(docker image inspect boyut:base --format '{{.Size}}')
+          head=$(docker image inspect boyut:head --format '{{.Size}}')
+          {
+            echo "| image (amd64, uncompressed) | bytes |"
+            echo "|---|---|"
+            echo "| $BASE_REF | $base |"
+            echo "| this PR | $head |"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
