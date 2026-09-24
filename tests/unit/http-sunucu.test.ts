@@ -1,4 +1,4 @@
-import type { Server } from 'node:http';
+import { request, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
@@ -250,6 +250,75 @@ describe('HTTP sunucusu', () => {
       body: JSON.stringify({ ...BASLAT, dolgu: 'x'.repeat(AZAMI_GOVDE) }),
     });
     expect(r.status).toBe(413);
+  });
+
+  it('answers 413 to an oversized chunked body that carries no Content-Length', async () => {
+    const taban = await baslat();
+    const durum = await new Promise<number>((ok, hata) => {
+      const istek = request(
+        `${taban}/mcp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+            'Transfer-Encoding': 'chunked',
+          },
+        },
+        (res) => {
+          res.resume();
+          ok(res.statusCode ?? 0);
+        },
+      );
+      // The server may cut the upload short once it has seen enough.
+      istek.on('error', (e) => (istek.writableEnded ? undefined : hata(e)));
+      const parca = 'x'.repeat(64 * 1024);
+      istek.write(`{"jsonrpc":"2.0","id":1,"method":"initialize","dolgu":"`);
+      for (let i = 0; i < 20; i++) istek.write(parca);
+      istek.end('"}');
+    });
+    expect(durum).toBe(413);
+  });
+
+  it('survives a client that drops the connection mid-upload', async () => {
+    const taban = await baslat();
+    await new Promise<void>((ok) => {
+      const istek = request(`${taban}/mcp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked' },
+      });
+      istek.on('error', () => ok());
+      istek.write('{"jsonrpc":"2.0",');
+      setTimeout(() => istek.destroy(), 50);
+    });
+    expect((await fetch(`${taban}/health`)).status).toBe(200);
+  });
+
+  it('still serves a small chunked body', async () => {
+    const taban = await baslat();
+    const govde = await new Promise<string>((ok, hata) => {
+      const istek = request(
+        `${taban}/mcp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+            'Transfer-Encoding': 'chunked',
+          },
+        },
+        (res) => {
+          let metin = '';
+          res.on('data', (p) => {
+            metin += p;
+          });
+          res.on('end', () => ok(metin));
+        },
+      );
+      istek.on('error', hata);
+      istek.end(JSON.stringify(BASLAT));
+    });
+    expect(JSON.parse(govde)).toMatchObject({ result: { serverInfo: { name: 'mcp-turkiye' } } });
   });
 
   it('requires X-API-Key when a key is set: 401 without or with a wrong one', async () => {

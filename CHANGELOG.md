@@ -22,6 +22,10 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 - **http:** `SIGTERM`/`SIGINT` sonrası biten bir isteğin keep-alive soketi boşta kalınca kapanma `keepAliveTimeout` kadar (5 sn) gecikiyordu; bekleme süresince boştaki soketler 100 ms'de bir kapatılıyor. Kapanma mantığı `kapanisiKur()` olarak `src/http-sunucu.ts`'e taşındı ve testlendi.
 
+### Fixed
+
+- **http:** 1 MB sınırı yalnızca `Content-Length` başlığına bakıyordu; başlıksız (`Transfer-Encoding: chunked`) bir gövde sınırsız okunup belleğe alınıyordu. Gövde artık sunucuda en fazla 1 MB okunur, aşan istek `413` alır ve bağlantı kapanır; bozuk JSON `400` (JSON-RPC `-32700`).
+
 ## [0.8.0] — 2026-09-22
 
 Beş yeni kaynak, on altı yeni araç: yirmi bir kaynak, kırk altı araç. Hepsi anahtarsız; İBB ve İzmir servisleri belediyelerin açık veri portallarında ilanlı API'lerdir.

@@ -174,6 +174,31 @@ function rpcHata(kod: number, mesaj: string) {
   return { jsonrpc: '2.0', error: { code: kod, message: mesaj }, id: null };
 }
 
+/**
+ * The request body as text, or null as soon as it passes AZAMI_GOVDE —
+ * declared or not. Reading stops there; the rest is never buffered.
+ */
+function govdeOku(req: IncomingMessage): Promise<string | null> {
+  if (Number(req.headers['content-length']) > AZAMI_GOVDE) return Promise.resolve(null);
+  return new Promise((ok, hata) => {
+    const parcalar: Buffer[] = [];
+    let boyut = 0;
+    const veri = (parca: Buffer) => {
+      boyut += parca.length;
+      if (boyut > AZAMI_GOVDE) {
+        req.off('data', veri);
+        req.pause();
+        ok(null);
+        return;
+      }
+      parcalar.push(parca);
+    };
+    req.on('data', veri);
+    req.on('end', () => ok(Buffer.concat(parcalar).toString('utf8')));
+    req.on('error', hata);
+  });
+}
+
 export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
   const hiz = new HizSiniri(ayarlar.dakikaLimiti, ayarlar.pencereMs, ayarlar.simdi);
   const izinli = ayarlar.izinliKaynaklar ?? [];
@@ -229,8 +254,28 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
       return;
     }
 
-    if (Number(req.headers['content-length']) > AZAMI_GOVDE) {
-      jsonYaz(res, 413, rpcHata(-32000, 'İstek gövdesi çok büyük.'), cors);
+    // Content-Length alone is not enough: a chunked body carries none, and the
+    // SDK transport would read any size into memory. Read it here, capped.
+    let govde: string | null;
+    try {
+      govde = await govdeOku(req);
+    } catch {
+      // The client went away mid-upload; there is no one left to answer.
+      res.destroy();
+      return;
+    }
+    if (govde === null) {
+      jsonYaz(res, 413, rpcHata(-32000, 'İstek gövdesi çok büyük.'), {
+        ...cors,
+        Connection: 'close',
+      });
+      return;
+    }
+    let ayristirilmis: unknown;
+    try {
+      ayristirilmis = JSON.parse(govde);
+    } catch {
+      jsonYaz(res, 400, rpcHata(-32700, 'Ayrıştırma hatası: gövde geçerli JSON değil.'), cors);
       return;
     }
 
@@ -245,7 +290,7 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
       // The SDK's getter/setter pair for onclose trips exactOptionalPropertyTypes.
       await server.connect(transport as Transport);
       for (const [ad, deger] of Object.entries(cors)) res.setHeader(ad, deger);
-      await transport.handleRequest(req, res);
+      await transport.handleRequest(req, res, ayristirilmis);
     } catch (hata) {
       console.error('mcp-turkiye: istek işlenemedi', hata);
       if (!res.headersSent) jsonYaz(res, 500, rpcHata(-32603, 'Sunucu hatası.'), cors);
