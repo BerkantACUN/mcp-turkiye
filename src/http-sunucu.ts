@@ -175,26 +175,27 @@ function rpcHata(kod: number, mesaj: string) {
 }
 
 /**
- * The request body as text, or null as soon as it passes AZAMI_GOVDE —
- * declared or not. Reading stops there; the rest is never buffered.
+ * The request body as text, or null when it passes AZAMI_GOVDE — declared or
+ * not. Past the limit nothing more is kept, but the rest is still read and
+ * dropped: answering and closing while the client is still uploading resets
+ * the connection (macOS reports ECONNRESET) instead of delivering the 413.
  */
 function govdeOku(req: IncomingMessage): Promise<string | null> {
-  if (Number(req.headers['content-length']) > AZAMI_GOVDE) return Promise.resolve(null);
   return new Promise((ok, hata) => {
     const parcalar: Buffer[] = [];
     let boyut = 0;
-    const veri = (parca: Buffer) => {
+    let fazla = Number(req.headers['content-length']) > AZAMI_GOVDE;
+    req.on('data', (parca: Buffer) => {
+      if (fazla) return;
       boyut += parca.length;
       if (boyut > AZAMI_GOVDE) {
-        req.off('data', veri);
-        req.pause();
-        ok(null);
+        fazla = true;
+        parcalar.length = 0;
         return;
       }
       parcalar.push(parca);
-    };
-    req.on('data', veri);
-    req.on('end', () => ok(Buffer.concat(parcalar).toString('utf8')));
+    });
+    req.on('end', () => ok(fazla ? null : Buffer.concat(parcalar).toString('utf8')));
     req.on('error', hata);
   });
 }
@@ -265,10 +266,7 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
       return;
     }
     if (govde === null) {
-      jsonYaz(res, 413, rpcHata(-32000, 'İstek gövdesi çok büyük.'), {
-        ...cors,
-        Connection: 'close',
-      });
+      jsonYaz(res, 413, rpcHata(-32000, 'İstek gövdesi çok büyük.'), cors);
       return;
     }
     let ayristirilmis: unknown;
