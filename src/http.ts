@@ -13,9 +13,15 @@ sunucu.listen(ayarlar.port, ayarlar.host, () => {
   );
 });
 
+// Graceful stop on a revision change or scale-in: stop accepting, drop idle
+// keep-alive sockets, let in-flight requests finish, and give up after a grace
+// period shorter than the platform's (Azure Container Apps waits 30 s).
+const KAPANMA_SURESI_MS = 10_000;
+
 for (const sinyal of ['SIGTERM', 'SIGINT'] as const) {
-  process.on(sinyal, () => {
+  process.once(sinyal, () => {
     sunucu.close(() => process.exit(0));
-    sunucu.closeAllConnections();
+    sunucu.closeIdleConnections();
+    setTimeout(() => process.exit(0), KAPANMA_SURESI_MS).unref();
   });
 }

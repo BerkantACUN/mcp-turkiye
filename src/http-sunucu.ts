@@ -19,11 +19,20 @@ export type HttpAyarlari = {
   pencereMs: number;
   /** Read the client IP from `X-Forwarded-For` (only behind a trusted proxy). */
   proxyyeGuven: boolean;
+  /**
+   * Browser origins allowed to call /mcp (`*` allows any). A request carrying
+   * an `Origin` header that is not listed gets 403: MCP clients send none, while
+   * browsers send one on every POST, DNS-rebinding requests included.
+   */
+  izinliKaynaklar?: readonly string[] | undefined;
   /** Clock, injectable for tests. */
   simdi?: (() => number) | undefined;
 };
 
 type Ortam = Record<string, string | undefined>;
+
+/** Tool arguments are small; anything larger is not a legitimate MCP request. */
+export const AZAMI_GOVDE = 1024 * 1024;
 
 /** Settings from the environment; the entry point takes no arguments. */
 export function ortamdanAyarlar(env: Ortam = process.env): HttpAyarlari & {
@@ -41,6 +50,10 @@ export function ortamdanAyarlar(env: Ortam = process.env): HttpAyarlari & {
     dakikaLimiti: Number.isFinite(limit) && limit >= 0 ? Math.floor(limit) : 60,
     pencereMs: 60_000,
     proxyyeGuven: env.TRUST_PROXY === '1',
+    izinliKaynaklar: (env.MCP_TURKIYE_ALLOWED_ORIGINS ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
   };
 }
 
@@ -52,6 +65,7 @@ export class HizSiniri {
     private readonly limit: number,
     private readonly pencereMs: number,
     private readonly simdi: () => number = Date.now,
+    private readonly enFazlaIp = 10_000,
   ) {}
 
   /** Counts the request; returns seconds to wait when over the limit, else 0. */
@@ -61,6 +75,7 @@ export class HizSiniri {
     this.supur(an);
     const p = this.pencereler.get(ip);
     if (!p || an - p.baslangic >= this.pencereMs) {
+      if (!p) this.yerAc(an);
       this.pencereler.set(ip, { baslangic: an, sayi: 1 });
       return 0;
     }
@@ -75,12 +90,26 @@ export class HizSiniri {
 
   private sonSupurme = 0;
 
-  /** Drops expired windows at most once per window, so the map cannot grow unbounded. */
-  private supur(an: number): void {
-    if (an - this.sonSupurme < this.pencereMs) return;
+  /** Drops expired windows at most once per window. */
+  private supur(an: number, zorla = false): void {
+    if (!zorla && an - this.sonSupurme < this.pencereMs) return;
     this.sonSupurme = an;
     for (const [ip, p] of this.pencereler) {
       if (an - p.baslangic >= this.pencereMs) this.pencereler.delete(ip);
+    }
+  }
+
+  /**
+   * Caps the map between sweeps: a burst of distinct addresses first forces a
+   * sweep, then evicts the oldest windows. An evicted address starts a fresh
+   * window, which is the price of bounded memory under such a burst.
+   */
+  private yerAc(an: number): void {
+    if (this.pencereler.size < this.enFazlaIp) return;
+    this.supur(an, true);
+    for (const ip of this.pencereler.keys()) {
+      if (this.pencereler.size < this.enFazlaIp) break;
+      this.pencereler.delete(ip);
     }
   }
 }
@@ -111,12 +140,24 @@ function anahtarDogru(gelen: string | string[] | undefined, beklenen: string): b
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers':
-    'Content-Type, Accept, X-API-Key, Mcp-Protocol-Version, Mcp-Session-Id, Last-Event-ID',
-};
+function kaynakIzinli(kaynak: string | undefined, izinli: readonly string[]): boolean {
+  return kaynak === undefined || izinli.includes('*') || izinli.includes(kaynak);
+}
+
+/** CORS headers only for an allowed browser origin; none for everyone else. */
+function corsBasliklari(
+  kaynak: string | undefined,
+  izinli: readonly string[],
+): Record<string, string> {
+  if (kaynak === undefined || !kaynakIzinli(kaynak, izinli)) return {};
+  return {
+    'Access-Control-Allow-Origin': izinli.includes('*') ? '*' : kaynak,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers':
+      'Content-Type, Accept, X-API-Key, Mcp-Protocol-Version, Mcp-Session-Id, Last-Event-ID',
+    Vary: 'Origin',
+  };
+}
 
 function jsonYaz(
   res: ServerResponse,
@@ -124,7 +165,7 @@ function jsonYaz(
   govde: unknown,
   basliklar: Record<string, string> = {},
 ): void {
-  res.writeHead(durum, { ...CORS, 'Content-Type': 'application/json', ...basliklar });
+  res.writeHead(durum, { 'Content-Type': 'application/json', ...basliklar });
   res.end(JSON.stringify(govde));
 }
 
@@ -135,12 +176,15 @@ function rpcHata(kod: number, mesaj: string) {
 
 export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
   const hiz = new HizSiniri(ayarlar.dakikaLimiti, ayarlar.pencereMs, ayarlar.simdi);
+  const izinli = ayarlar.izinliKaynaklar ?? [];
 
   return createServer(async (req, res) => {
     const yol = new URL(req.url ?? '/', 'http://yerel').pathname;
+    const kaynak = typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
+    const cors = corsBasliklari(kaynak, izinli);
 
     if (req.method === 'OPTIONS') {
-      res.writeHead(204, CORS);
+      res.writeHead(204, cors);
       res.end();
       return;
     }
@@ -148,34 +192,45 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
     // Health probes are neither keyed nor counted: the platform polls them.
     if (yol === '/health') {
       if (req.method !== 'GET') {
-        jsonYaz(res, 405, { durum: 'yöntem desteklenmiyor' }, { Allow: 'GET' });
+        jsonYaz(res, 405, { durum: 'yöntem desteklenmiyor' }, { ...cors, Allow: 'GET' });
         return;
       }
-      jsonYaz(res, 200, { durum: 'ok', surum: SURUM });
+      jsonYaz(res, 200, { durum: 'ok', surum: SURUM }, cors);
       return;
     }
 
     if (yol !== '/mcp') {
-      jsonYaz(res, 404, { durum: 'bulunamadı' });
+      jsonYaz(res, 404, { durum: 'bulunamadı' }, cors);
       return;
     }
 
     const bekle = hiz.kaydet(istemciIp(req, ayarlar.proxyyeGuven));
     if (bekle > 0) {
       jsonYaz(res, 429, rpcHata(-32000, 'Çok fazla istek; biraz sonra yeniden deneyin.'), {
+        ...cors,
         'Retry-After': String(bekle),
       });
       return;
     }
 
+    if (!kaynakIzinli(kaynak, izinli)) {
+      jsonYaz(res, 403, rpcHata(-32000, 'Bu kaynaktan (Origin) gelen isteklere izin verilmiyor.'));
+      return;
+    }
+
     if (ayarlar.apiAnahtari && !anahtarDogru(req.headers['x-api-key'], ayarlar.apiAnahtari)) {
-      jsonYaz(res, 401, rpcHata(-32001, 'Geçersiz ya da eksik X-API-Key.'));
+      jsonYaz(res, 401, rpcHata(-32001, 'Geçersiz ya da eksik X-API-Key.'), cors);
       return;
     }
 
     // Stateless: there is no session to stream to or to delete.
     if (req.method !== 'POST') {
-      jsonYaz(res, 405, rpcHata(-32000, 'Yöntem desteklenmiyor.'), { Allow: 'POST' });
+      jsonYaz(res, 405, rpcHata(-32000, 'Yöntem desteklenmiyor.'), { ...cors, Allow: 'POST' });
+      return;
+    }
+
+    if (Number(req.headers['content-length']) > AZAMI_GOVDE) {
+      jsonYaz(res, 413, rpcHata(-32000, 'İstek gövdesi çok büyük.'), cors);
       return;
     }
 
@@ -189,11 +244,11 @@ export function httpSunucusuOlustur(ayarlar: HttpAyarlari): Server {
     try {
       // The SDK's getter/setter pair for onclose trips exactOptionalPropertyTypes.
       await server.connect(transport as Transport);
-      for (const [ad, deger] of Object.entries(CORS)) res.setHeader(ad, deger);
+      for (const [ad, deger] of Object.entries(cors)) res.setHeader(ad, deger);
       await transport.handleRequest(req, res);
     } catch (hata) {
       console.error('mcp-turkiye: istek işlenemedi', hata);
-      if (!res.headersSent) jsonYaz(res, 500, rpcHata(-32603, 'Sunucu hatası.'));
+      if (!res.headersSent) jsonYaz(res, 500, rpcHata(-32603, 'Sunucu hatası.'), cors);
     }
   });
 }
