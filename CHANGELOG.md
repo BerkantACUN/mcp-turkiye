@@ -17,6 +17,7 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 
 - **README / 0.8.0 notu:** araç sayısı 46, kaynak sayısı 21 yazılmıştı; 0.8.0'da ve bugün sunucu 19 kaynaktan 44 araç kaydeder. README'nin İngilizce özeti düzeltildi; araç tablosunun kayıtlı araçlarla ve özetteki sayının gerçek sayıyla aynı olduğu artık bir testle denetlenir.
 - **README:** claude.ai / Claude Desktop'a uzak sunucu olarak bağlama bölümü: özel bağlayıcı ekleme adımları, `x-api-key` istek başlığı (beta), Anthropic çıkış aralığı ve paylaşılan hız sınırı. Herkese açık bir uç nokta yoktur.
+- **Cursor eklentisi:** `.cursor-plugin/plugin.json` — Cursor'ın eklenti manifesti (ad, açıklama, sürüm, logo, lisans); MCP yapılandırması kökteki `.mcp.json`. Sürümü `package.json` ile bir testle eşlenir.
 
 ## [0.8.0] — 2026-09-22
 
