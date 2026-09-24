@@ -12,6 +12,9 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 ### Changed
 
 - **Sunucu yönergesi (`instructions`):** kaynak listesi elle yazılmıştı ve EVDS, BtcTurk, Kandilli, ÖSYM, iller, haber başlıkları ile İBB/İzmir'in yeni servislerini saymıyordu; artık kayıtlı kaynakların adlarından üretilir, eksik kalamaz.
+### Fixed
+
+- **README / 0.8.0 notu:** araç sayısı 46, kaynak sayısı 21 yazılmıştı; 0.8.0'da ve bugün sunucu 19 kaynaktan 44 araç kaydeder. README'nin İngilizce özeti düzeltildi; araç tablosunun kayıtlı araçlarla ve özetteki sayının gerçek sayıyla aynı olduğu artık bir testle denetlenir.
 
 ## [0.8.0] — 2026-09-22
 
