@@ -25,6 +25,7 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 ### Fixed
 
 - **http:** 1 MB sınırı yalnızca `Content-Length` başlığına bakıyordu; başlıksız (`Transfer-Encoding: chunked`) bir gövde sınırsız okunup belleğe alınıyordu. Gövde artık sunucuda en fazla 1 MB okunur, aşan istek `413` alır ve bağlantı kapanır; bozuk JSON `400` (JSON-RPC `-32700`).
+- **http:** 1 MB sınırı yalnızca `Content-Length` başlığına bakıyordu; başlıksız (`Transfer-Encoding: chunked`) bir gövde sınırsız okunup belleğe alınıyordu. Gövde artık sunucuda okunur ve en fazla 1 MB'ı belleğe alınır; aşan kısım okunup atılır, istek `413` alır; bozuk JSON `400` (JSON-RPC `-32700`).
 
 ## [0.8.0] — 2026-09-22
 
