@@ -18,6 +18,8 @@ Biçim [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), sürümleme [Se
 - **README / 0.8.0 notu:** araç sayısı 46, kaynak sayısı 21 yazılmıştı; 0.8.0'da ve bugün sunucu 19 kaynaktan 44 araç kaydeder. README'nin İngilizce özeti düzeltildi; araç tablosunun kayıtlı araçlarla ve özetteki sayının gerçek sayıyla aynı olduğu artık bir testle denetlenir.
 - **README:** claude.ai / Claude Desktop'a uzak sunucu olarak bağlama bölümü: özel bağlayıcı ekleme adımları, `x-api-key` istek başlığı (beta), Anthropic çıkış aralığı ve paylaşılan hız sınırı. Herkese açık bir uç nokta yoktur.
 
+- **http:** `SIGTERM`/`SIGINT` sonrası biten bir isteğin keep-alive soketi boşta kalınca kapanma `keepAliveTimeout` kadar (5 sn) gecikiyordu; bekleme süresince boştaki soketler 100 ms'de bir kapatılıyor. Kapanma mantığı `kapanisiKur()` olarak `src/http-sunucu.ts`'e taşındı ve testlendi.
+
 ## [0.8.0] — 2026-09-22
 
 Beş yeni kaynak, on altı yeni araç: yirmi bir kaynak, kırk altı araç. Hepsi anahtarsız; İBB ve İzmir servisleri belediyelerin açık veri portallarında ilanlı API'lerdir.
