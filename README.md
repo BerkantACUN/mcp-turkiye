@@ -41,6 +41,8 @@ claude mcp add turkiye -- npx -y mcp-turkiye
 }
 ```
 
+**Cline** — MCP ayarlarında aynı `mcpServers` girdisi; Cline'a kurulumu kendisi yaptırmak için adım adım yönerge: [llms-install.md](llms-install.md).
+
 Sonra asistanınıza Türkçe sorun:
 
 > "Bugünkü TCMB dolar satış kuru ne, hangi bültenden?"
